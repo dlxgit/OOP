@@ -32,26 +32,28 @@ bool IsFileSizeCorrect(std::ifstream & inputFile)
 
 void SearchAndReplaceSubstring(std::ifstream & inputFile, std::ofstream & outputFile, const std::string & searchString, const std::string & replaceString)
 {
-	std::string line;
-
 	int searchStringSize = searchString.size();
 	int replaceStringSize = replaceString.size();
+	std::string line;
 
 	while (std::getline(inputFile, line))
 	{
-		int nextEntryIndex = 0;
-
-		while (true)
+		if (searchString != "")  //if search substring is not empty, try to find it in string
 		{
-			nextEntryIndex = line.find(searchString, nextEntryIndex);
-			if (nextEntryIndex < 0)
+			int nextEntryIndex = 0;
+
+			while (true)
 			{
-				break;
+				nextEntryIndex = line.find(searchString, nextEntryIndex);
+				if (nextEntryIndex < 0)
+				{
+					break;
+				}
+				line.replace(nextEntryIndex, searchStringSize, replaceString);
+				nextEntryIndex += replaceStringSize;
 			}
-			line.replace(nextEntryIndex, searchStringSize, replaceString);
-			nextEntryIndex += replaceStringSize;
 		}
-		outputFile << line;
+		outputFile << line << '\n';
 	}
 	
 	inputFile.close();
@@ -60,25 +62,26 @@ void SearchAndReplaceSubstring(std::ifstream & inputFile, std::ofstream & output
 }
 
 
-void main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	if (argc != 5)
 	{
 		std::cout << "incorrect program execution.\nExample: replace.exe <inputFile> <outputFile> <searchString> <replaceString>" << std::endl;
+		return 1;
 	}
-	else
+
+	std::ifstream inputFile;
+	std::ofstream outputFile;
+
+	inputFile.open(argv[1]);
+
+	if (!(IsFileNameCorrect(inputFile) && IsFileSizeCorrect(inputFile)))
 	{
-		std::ifstream inputFile;
-		std::ofstream outputFile;
-
-		inputFile.open(argv[1]);
-
-		if (IsFileNameCorrect(inputFile) && IsFileSizeCorrect(inputFile))
-		{
-			outputFile.open(argv[2]);
-
-			SearchAndReplaceSubstring(inputFile, outputFile, argv[3], argv[4]);
-		}
-		std::cout << "Program has finished" << std::endl;
+		return 1;
 	}
+
+	outputFile.open(argv[2]);
+	SearchAndReplaceSubstring(inputFile, outputFile, argv[3], argv[4]);
+
+	return 0;
 }
