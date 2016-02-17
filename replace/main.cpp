@@ -4,7 +4,7 @@
 
 const std::streamoff FILE_MAX_SIZE = 2147483648;
 
-bool IsFileNameCorrect(std::ifstream & inputFile)
+bool IsFileNameCorrect(const std::ifstream & inputFile)
 {
 	if (inputFile.is_open())
 	{
@@ -17,7 +17,7 @@ bool IsFileNameCorrect(std::ifstream & inputFile)
 bool IsFileSizeCorrect(std::ifstream & inputFile)
 {
 	inputFile.seekg(0, std::ios::end);
-	int fileSize = inputFile.tellg();
+	std::streamoff fileSize = inputFile.tellg();
 
 	if (FILE_MAX_SIZE < fileSize)
 	{
