@@ -32,35 +32,34 @@ bool IsFileSizeCorrect(std::ifstream & inputFile)
 
 void SearchAndReplaceSubstring(std::ifstream & inputFile, std::ofstream & outputFile, const std::string & searchString, const std::string & replaceString)
 {
-	int searchStringSize = searchString.size();
-	int replaceStringSize = replaceString.size();
+	size_t searchStringSize = searchString.size();
+	size_t replaceStringSize = replaceString.size();
 	std::string line;
-
+	bool isFirstLine = true;
 	while (std::getline(inputFile, line))
 	{
+		if (!isFirstLine)
+		{
+			outputFile << '\n';  //write new line if not first entry into loop
+		}
+		else isFirstLine = false;
+
 		if (searchString != "")  //if search substring is not empty, try to find it in string
 		{
-			int nextEntryIndex = 0;
-
-			while (true)
+			size_t nextEntryIndex = 0;
+			while ((nextEntryIndex = line.find(searchString, nextEntryIndex)) != std::string::npos)
 			{
-				nextEntryIndex = line.find(searchString, nextEntryIndex);
-				if (nextEntryIndex < 0)
-				{
-					break;
-				}
 				line.replace(nextEntryIndex, searchStringSize, replaceString);
 				nextEntryIndex += replaceStringSize;
 			}
 		}
-		outputFile << line << '\n';
+		outputFile << line;
 	}
-	
+
 	inputFile.close();
 	if (!outputFile.flush())
 		std::cout << "Failed to write in output file";
 }
-
 
 int main(int argc, char *argv[])
 {
@@ -72,7 +71,6 @@ int main(int argc, char *argv[])
 
 	std::ifstream inputFile;
 	std::ofstream outputFile;
-
 	inputFile.open(argv[1]);
 
 	if (!(IsFileNameCorrect(inputFile) && IsFileSizeCorrect(inputFile)))
@@ -82,6 +80,5 @@ int main(int argc, char *argv[])
 
 	outputFile.open(argv[2]);
 	SearchAndReplaceSubstring(inputFile, outputFile, argv[3], argv[4]);
-
 	return 0;
 }
