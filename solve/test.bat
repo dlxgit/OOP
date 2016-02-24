@@ -7,6 +7,18 @@ solve.exe "" "" ""
 IF NOT ERRORLEVEL 1 GOTO err
 
 REM
+solve.exe 1. .1 1..1
+IF NOT ERRORLEVEL 1 GOTO err
+
+REM
+solve.exe 05 00.5 00
+IF ERRORLEVEL 1 GOTO err
+
+REM
+solve.exe a 3 -
+IF NOT ERRORLEVEL 1 GOTO err
+
+REM
 solve.exe 0 1 -1
 IF NOT ERRORLEVEL 1 GOTO err
 

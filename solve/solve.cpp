@@ -7,19 +7,64 @@
 
 const size_t CALC_PRECISION = 4;
 
-bool IsInputCorrect(const double & a)
+double ComputeDiscriminant(const double & a, const double & b, const double & c)
 {
-	if (a == 0)
+	return b * b - (4 * a * c);
+}
+
+bool IsNumber(const std::string & str)
+{
+	if (str.size() == 0 || str[0] == '.' || str[str.size() - 1] == '.')  //if string is empty or it has '.' on first/last position 
 	{
-		std::cout << "Error. Impossible to calculate quadratic roots (a = 0)" << std::endl;
+		return false;
+	}
+	if (!(str[0] < 58 && str[0] > 47) && str[0] != '-') //if first element is not correct
+	{
+		return false;
+	}
+
+	bool isPointAlready = false;  // flag if we already met '.' (to check if we meet it once again)
+
+	for (size_t i = 1; i < str.size(); i++)
+	{
+		if (str[i] == '.')
+		{
+			if (true == isPointAlready)
+			{
+				return false;
+			}
+			isPointAlready = true;
+		}
+		else if (str[i] > 57 || str[i] < 48)
+		{
+			std::cout << "number <" << str << "> is not correct" << std::endl;
+			return false;
+		}
+	}
+	return true;
+}
+
+bool IsInputCorrect(const std::string & a, const std::string & b, const std::string & c)
+{
+	if (!IsNumber(a) || !IsNumber(b) || !IsNumber(c))
+	{
+		std::cout << "incorrect numbers" << std::endl;
+		return false;
+	}
+	if (a == "0")
+	{
+		std::cout << "Error. Impossible to calculate quadratic roots (a == 0)" << std::endl;
 		return false;
 	}
 	return true;
 }
 
-void CalculateAndPrintRoots(const double & a, const double & b, const double & c)
+void CalculateAndPrintRoots(char * argv[])
 {
-	const float D = float(b * b - (4 * a * c));
+	const double a = atof(argv[1]);
+	const double b = atof(argv[2]);
+	const double c = atof(argv[3]);
+	const double D = ComputeDiscriminant(a,b,c);
 
 	if (D < 0)
 	{
@@ -46,11 +91,8 @@ int main(int argc, char *argv[])
 		std::cout << "incorrect program execution.\nUsage: solve.exe <A> <B> <C>" << std::endl;
 		return 1;
 	}
-	const double a = atof(argv[1]);
-	const double b = atof(argv[2]);
-	const double c = atof(argv[3]);
-	if (!IsInputCorrect(a))
+	if (!IsInputCorrect(argv[1], argv[2], argv[3]))
 		return 1;
-	CalculateAndPrintRoots(a, b, c);
+	CalculateAndPrintRoots(argv);
 	return 0;
 }
