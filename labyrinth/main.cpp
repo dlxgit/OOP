@@ -96,9 +96,9 @@ vector<Vector2> GetAdjacentCells(vector<string> & field, vector<Vector2> adjacen
 	{
 		for (size_t j = 0; j < field.size(); j++)
 		{
-			if (abs(int(i) - int(j)) < 1) && abs(int(i) - int(j)) < 1)
+			if ((abs(int(i) - int(j)) < 1) && abs(int(i) - int(j)) < 1)
 			{
-				return{ j,i };
+				return { j,i };
 			}
 		}
 	}
