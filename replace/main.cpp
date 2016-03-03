@@ -2,66 +2,68 @@
 #include <fstream>
 #include <string>
 
-const std::streamoff FILE_MAX_SIZE = 2147483648;
 
-bool IsFileNameCorrect(const std::ifstream & inputFile)
+std::string ComputeNewString(const std::string & line,const std::string & searchString, const std::string & replaceString)
 {
-	if (inputFile.is_open())
-	{
-		return true;
-	}
-	std::cout << "inputFile name is incorrect" << std::endl;
-	return false;
-}
+	std::string newString = "";
 
-bool IsFileSizeCorrect(std::ifstream & inputFile)
-{
-	inputFile.seekg(0, std::ios::end);
-	std::streamoff fileSize = inputFile.tellg();
+	size_t nextEntryIndex = 0;
+	size_t prevEntryIndex = 0;
 
-	if (FILE_MAX_SIZE < fileSize)
-	{
-		std::cout << "inputFile size is more than 2GB" << std::endl;
-		return false;
-	}
-
-	inputFile.clear();
-	inputFile.seekg(0, std::ios_base::beg);
-	return true;
-}
-
-void SearchAndReplaceSubstring(std::ifstream & inputFile, std::ofstream & outputFile, const std::string & searchString, const std::string & replaceString)
-{
 	size_t searchStringSize = searchString.size();
 	size_t replaceStringSize = replaceString.size();
+
+	while ((nextEntryIndex = line.find(searchString, nextEntryIndex)) != std::string::npos)
+	{
+		std::string sub = line.substr(prevEntryIndex, nextEntryIndex - prevEntryIndex);
+		newString += line.substr(prevEntryIndex, nextEntryIndex - prevEntryIndex) + replaceString;
+
+		nextEntryIndex += searchStringSize;
+		prevEntryIndex = nextEntryIndex;
+	}
+
+	newString += line.substr(prevEntryIndex);
+	return newString;
+}
+
+bool SearchAndReplaceSubstring(const std::string & inputFileName, const std::string & outputFileName, const std::string & searchString, const std::string & replaceString)
+{
+	std::ifstream inputFile(inputFileName);
+	if (!inputFile.is_open())
+	{
+		std::cout << "inputFile name is incorrect" << std::endl;
+		return false;
+	}
+	std::ofstream outputFile(outputFileName);
+
 	std::string line;
 	bool isFirstLine = true;
+
 	while (std::getline(inputFile, line))
 	{
 		if (!isFirstLine)
 		{
-			outputFile << '\n';  //write new line if not first entry into loop
+			outputFile << '\n';  //write new line every time, except if it's first line in file
 		}
 		else isFirstLine = false;
 
-		if (searchString != "")  //if search substring is not empty, try to find it in string
+		if (searchString.empty()) //if search substring is empty, just rewrite it in outputFile
 		{
-			size_t nextEntryIndex = 0;
-			while ((nextEntryIndex = line.find(searchString, nextEntryIndex)) != std::string::npos)
-			{
-				line.replace(nextEntryIndex, searchStringSize, replaceString);
-				nextEntryIndex += replaceStringSize;
-			}
+			outputFile << line;
 		}
-		outputFile << line;
+		else //replace subString
+		{
+			std::string newString = ComputeNewString(line, searchString, replaceString);
+			outputFile << newString;
+		}
 	}
 
-	inputFile.close();
 	if (!outputFile.flush())
 		std::cout << "Failed to write in output file";
+	return true;
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char * argv[])
 {
 	if (argc != 5)
 	{
@@ -69,16 +71,9 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	std::ifstream inputFile;
-	std::ofstream outputFile;
-	inputFile.open(argv[1]);
-
-	if (!(IsFileNameCorrect(inputFile) && IsFileSizeCorrect(inputFile)))
+	if (!SearchAndReplaceSubstring(argv[1], argv[2], argv[3], argv[4]))
 	{
 		return 1;
 	}
-
-	outputFile.open(argv[2]);
-	SearchAndReplaceSubstring(inputFile, outputFile, argv[3], argv[4]);
 	return 0;
 }
