@@ -5,7 +5,7 @@
 #include <math.h>
 
 
-const size_t CALC_PRECISION = 4;
+const size_t CALC_PRECISION = 4;  //number of digits after "."
 
 double ComputeDiscriminant(const double & a, const double & b, const double & c)
 {
@@ -18,7 +18,7 @@ bool IsNumber(const std::string & str)
 	{
 		return false;
 	}
-	if (!(str[0] < 58 && str[0] > 47) && str[0] != '-') //if first element is not correct
+	if (!(str[0] < 58 && str[0] > 47) && str[0] != '-') //if first element is not correct (not between 0 and 9)
 	{
 		return false;
 	}
@@ -46,9 +46,9 @@ bool IsNumber(const std::string & str)
 
 bool IsInputCorrect(const std::string & a, const std::string & b, const std::string & c)
 {
-	if (!IsNumber(a) || !IsNumber(b) || !IsNumber(c))
+	if (!(IsNumber(a) && IsNumber(b) && IsNumber(c)))
 	{
-		std::cout << "incorrect numbers" << std::endl;
+		std::cout << "Error: there is an incorrect number" << std::endl;
 		return false;
 	}
 	if (a == "0")
@@ -64,13 +64,13 @@ void CalculateAndPrintRoots(char * argv[])
 	const double a = atof(argv[1]);
 	const double b = atof(argv[2]);
 	const double c = atof(argv[3]);
-	const double D = ComputeDiscriminant(a,b,c);
+	const double discriminant = ComputeDiscriminant(a,b,c);
 
-	if (D < 0)
+	if (discriminant < 0)
 	{
 		std::cout << "There is no real root (D < 0)" << std::endl;
 	}
-	else if (D == 0)
+	else if (discriminant == 0)
 	{
 		std::cout << "One root: " << 
 		std::fixed << std::setprecision(CALC_PRECISION) << 
@@ -79,8 +79,8 @@ void CalculateAndPrintRoots(char * argv[])
 	else
 	{
 		std::cout << "Two roots: " << 
-		std::fixed << std::setprecision(CALC_PRECISION) << (-b + sqrt(D)) / (2 * a) << " , " << 
-		std::fixed << std::setprecision(CALC_PRECISION) << (-b - sqrt(D)) / (2 * a) << std::endl;
+		std::fixed << std::setprecision(CALC_PRECISION) << (-b + sqrt(discriminant)) / (2 * a) << " , " <<
+		std::fixed << std::setprecision(CALC_PRECISION) << (-b - sqrt(discriminant)) / (2 * a) << std::endl;
 	}
 }
 

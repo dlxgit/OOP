@@ -3,7 +3,7 @@
 #include <string>
 
 
-std::string ComputeNewString(const std::string & line,const std::string & searchString, const std::string & replaceString)
+std::string ReplaceSubstring(const std::string & line,const std::string & searchString, const std::string & replaceString)
 {
 	std::string newString = "";
 
@@ -15,14 +15,14 @@ std::string ComputeNewString(const std::string & line,const std::string & search
 
 	while ((nextEntryIndex = line.find(searchString, nextEntryIndex)) != std::string::npos)
 	{
-		std::string sub = line.substr(prevEntryIndex, nextEntryIndex - prevEntryIndex);
-		newString += line.substr(prevEntryIndex, nextEntryIndex - prevEntryIndex) + replaceString;
+		newString.append(line, prevEntryIndex, nextEntryIndex - prevEntryIndex); //add substring between prevEntry and nextEntry to new string
+		newString.append(replaceString);
 
 		nextEntryIndex += searchStringSize;
 		prevEntryIndex = nextEntryIndex;
 	}
 
-	newString += line.substr(prevEntryIndex);
+	newString.append(line,prevEntryIndex);
 	return newString;
 }
 
@@ -34,7 +34,13 @@ bool SearchAndReplaceSubstring(const std::string & inputFileName, const std::str
 		std::cout << "inputFile name is incorrect" << std::endl;
 		return false;
 	}
+
 	std::ofstream outputFile(outputFileName);
+	if (!outputFile.is_open())
+	{
+		std::cout << "Error: could not open outputFile" << std::endl;
+		return false;
+	}
 
 	std::string line;
 	bool isFirstLine = true;
@@ -53,7 +59,7 @@ bool SearchAndReplaceSubstring(const std::string & inputFileName, const std::str
 		}
 		else //replace subString
 		{
-			std::string newString = ComputeNewString(line, searchString, replaceString);
+			std::string newString = ReplaceSubstring(line, searchString, replaceString);
 			outputFile << newString;
 		}
 	}

@@ -88,7 +88,7 @@ Vector2 GetLetterPosition(const vector<string> & field, const char & letter)  //
 
 //////////////////////////////////////////////////////////////
 
-vector<Vector2> GetAdjacentCells(vector<string> & field, vector<Vector2> adjacent, )
+vector<Vector2> GetAdjacentCells(const vector<string> & field, vector<Vector2> adjacent, )
 {
 	vector<Vector2> adjacent;
 	
@@ -106,9 +106,16 @@ vector<Vector2> GetAdjacentCells(vector<string> & field, vector<Vector2> adjacen
 	return adjacent;
 }
 
-void IterateNextWave(vector<string> & field, vector<Vector2> adjacent, const size_t & distance, const Vector2 & beginPos, const Vector2 & endPos)
+//void IterateNextWave(vector<string> & field, vector<Vector2> adjacent, const size_t & distance, const Vector2 & beginPos, const Vector2 & endPos)
 {
 	
+
+}
+
+void IterateNextWave(const vector<string> & field, vector<Vector2> adjacent, vector<vector<int>> & distance, const size_t & distance, const Vector2 & endPos)
+{
+	adjacent = GetAdjacentCells();
+
 
 }
 
@@ -145,6 +152,8 @@ int main(int argc, char *argv[])
 		std::cout << "incorrect program execution.\nUsage: labyrinth.exe <inputFile> <outputFile>" << std::endl;
 		return 1;
 	}
+
+
 
 	if (!ComputeWay(argv[1]))
 	{
