@@ -2,8 +2,7 @@
 #include <string>
 #include <iostream>
 #include <iomanip>
-#include <math.h>
-
+#include <vector>
 
 const size_t CALC_PRECISION = 4;  //number of digits after "."
 
@@ -51,7 +50,7 @@ bool IsInputCorrect(const std::string & a, const std::string & b, const std::str
 		std::cout << "Error: there is an incorrect number" << std::endl;
 		return false;
 	}
-	if (a == "0")
+	if(std::stod(a) == 0)
 	{
 		std::cout << "Error. Impossible to calculate quadratic roots (a == 0)" << std::endl;
 		return false;
@@ -59,32 +58,68 @@ bool IsInputCorrect(const std::string & a, const std::string & b, const std::str
 	return true;
 }
 
-void CalculateAndPrintRoots(char * argv[])
+std::vector<double> ComputeRoots(const std::string & strA, const std::string & strB, const std::string & strC)
 {
-	const double a = atof(argv[1]);
-	const double b = atof(argv[2]);
-	const double c = atof(argv[3]);
-	const double discriminant = ComputeDiscriminant(a,b,c);
+	std::vector<double> roots;
 
-	if (discriminant < 0)
+	const double a = std::stod(strA);
+	const double b = std::stod(strB);
+	const double c = std::stod(strC);
+	const double discriminant = ComputeDiscriminant(a,b,c);
+	
+	if (discriminant == 0)
 	{
-		std::cout << "There is no real root (D < 0)" << std::endl;
+		roots.push_back((-b) / (2 * a));
 	}
-	else if (discriminant == 0)
+	else if (discriminant > 0)
 	{
-		std::cout << "One root: " << 
-		std::fixed << std::setprecision(CALC_PRECISION) << 
-		(-b) / (2 * a) << std::endl;
+		roots.push_back((-b + sqrt(discriminant)) / (2 * a));
+		roots.push_back((-b - sqrt(discriminant)) / (2 * a));
+	}
+	return roots;
+}
+
+void PrintResult(const std::vector<double> & roots)
+{
+	if (roots.size() == 0)
+	{
+		std::cout << "There is no real root (discriminant is negative)" << std::endl;
+	}
+	else if (roots.size() == 1)
+	{
+		std::cout << "One root: " << std::fixed << std::setprecision(CALC_PRECISION) << roots[0] << std::endl;
 	}
 	else
 	{
-		std::cout << "Two roots: " << 
-		std::fixed << std::setprecision(CALC_PRECISION) << (-b + sqrt(discriminant)) / (2 * a) << " , " <<
-		std::fixed << std::setprecision(CALC_PRECISION) << (-b - sqrt(discriminant)) / (2 * a) << std::endl;
+		std::cout << "Two roots: " << std::fixed << std::setprecision(CALC_PRECISION) << 
+			roots[0] << " , " << roots[1] << std::endl;
 	}
 }
 
-int main(int argc, char *argv[])
+bool WriteResultInFile(const std::vector<double> & roots)
+{
+	std::ofstream outputFile("output.txt");
+	if (!outputFile.is_open())
+	{
+		return false;
+	}
+	if (roots.size() == 1)
+	{
+		outputFile << std::fixed << std::setprecision(CALC_PRECISION) << roots[0];
+	}
+	else if (roots.size() == 2)
+	{
+		outputFile << std::fixed << std::setprecision(CALC_PRECISION) << roots[0] << " " << roots[1];
+	}
+	if (!outputFile.flush())
+	{
+		std::cout << "Failed to write in output file";
+		return false;
+	}
+	return true;
+}
+
+int main(int argc, char * argv[])
 {
 	if (argc != 4)
 	{
@@ -92,7 +127,14 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 	if (!IsInputCorrect(argv[1], argv[2], argv[3]))
+	{
 		return 1;
-	CalculateAndPrintRoots(argv);
+	}
+	const std::vector<double> roots = ComputeRoots(argv[1], argv[2], argv[3]);
+	PrintResult(roots);
+	if (!WriteResultInFile(roots))
+	{
+		return 1;
+	}
 	return 0;
 }
