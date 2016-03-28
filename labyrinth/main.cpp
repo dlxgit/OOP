@@ -121,8 +121,8 @@ void IterateNextWave(const vector<string> & field, vector<Vector2> adjacent, vec
 
 bool ComputeWay(const string & inputFileName)
 {
-	vector<string> field;
-	field = ReadFieldFromFile(inputFileName);
+	vector<string> field = ReadFieldFromFile(inputFileName);
+
 	if (field.size() == 0)
 	{
 		return false;
@@ -135,7 +135,7 @@ bool ComputeWay(const string & inputFileName)
 	Vector2 beginPos = GetLetterPosition(field, 'A');
 	Vector2 endPos = GetLetterPosition(field, 'B');
 	
-
+	vector<bool> visited = 
 
 
 	return true;
