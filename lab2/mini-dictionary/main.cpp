@@ -1,4 +1,4 @@
-
+п»ї
 #pragma warning( disable : 4996 )
 #include <string>
 #include <fstream>
@@ -13,7 +13,6 @@
 
 using namespace std;
 
-//TODO: mb do without vector, just with map
 
 vector<string> GetWords(string & line)
 {
@@ -24,7 +23,7 @@ vector<string> GetWords(string & line)
 	return result;
 }
 
-void ReadDataFromFile(map<string, vector<string>> & dictionary)
+void ReadDataFromFile(map<string, string> & dictionary)
 {
 	ifstream inputFile("Program_data.txt");
 	if (!inputFile.is_open())
@@ -38,17 +37,15 @@ void ReadDataFromFile(map<string, vector<string>> & dictionary)
 		{
 			vector<string> result;
 			boost::split(result, line, boost::is_any_of("/"));
-			if (result.size() > 1)
+			if (result.size() == 2)
 			{
-				for (size_t i = 1; i < result.size(); i++)
-				{
-					dictionary[result[0]].push_back(result[i]);
-				}
+				dictionary[result[0]] = result[1];
 			}
 		}
 	}
 }
 
+/*
 void PrintWords(const vector<string> & translation)
 {
 	cout << '\n';
@@ -62,55 +59,51 @@ void PrintWords(const vector<string> & translation)
 	}
 	cout << '\n';
 }
+*/
 
-void SaveDictionaryInFile(map<string, vector<string>> & dictionary)
+bool SaveDictionaryInFile(map<string, string> & dictionary)
 {
 	ofstream outputFile("Program_data.txt");
 	
-	for (std::map<string, vector<string>>::iterator it = dictionary.begin(); it != dictionary.end(); ++it)
+	for (std::map<string, string>::iterator it = dictionary.begin(); it != dictionary.end(); ++it)
 	{
-		outputFile << it->first << '/';
-		for (string & val : it->second)
-		{
-			outputFile << val << '/';
-		}
+		outputFile << it->first << '/' << it->second;
 	}
+	if (!outputFile.flush())
+	{
+		cout << "Error closing outputFile" << endl;
+		return false;
+	}
+	return true;
 }
 
 void main()
 {
-	map<string, vector<string>> oldDictionary;
+	map<string, string> oldDictionary;
 	ReadDataFromFile(oldDictionary);
-	map<string, vector<string>> dictionary = oldDictionary;
+	map<string, string> dictionary = oldDictionary;
 
 	bool isSomethingChanged = false;
 	string searchingWord;
 	cin >> searchingWord;
 	while (searchingWord != "...")
 	{
-		cout << "\n<start>\n";
 		if (dictionary.count(searchingWord) == 0)
 		{
-			cout << "Unknown word " << searchingWord << ". Введите перевод или пустую строку для отказа." << endl;
+			cout << "Unknown word " << searchingWord << ". Input translation or <Enter> to cancel." << endl;
 			string translation;
 			cin >> translation;
-			if (translation.empty() == true)
-			{
-				cout << "\n<empty_str -> ignore_word>\n";
-				continue;
-			}
-			else
+			if (!translation.empty())
 			{
 				isSomethingChanged = true;
 				cout << "\n<add_in_dict>\n";
 				cout << "Word " << searchingWord << " saved as " << translation << endl;
-				dictionary[searchingWord].push_back(translation);
+				dictionary[searchingWord] = translation;
 			}
 		}
 		else
 		{
-			cout << "\n<print_existing_translate: >\n";
-			PrintWords(dictionary[searchingWord]);
+			cout << dictionary[searchingWord] << endl;
 			cin >> searchingWord;
 		}
 		cin >> searchingWord;
@@ -118,11 +111,14 @@ void main()
 
 	if (isSomethingChanged)
 	{
-		cout << "\nSomething has changed, save changes?(y/n)\n";
+		cout << "Something has changed, do you want to save changes?(Y or y to save)" << endl;
 		cin >> searchingWord;
 		if (searchingWord == "Y" || searchingWord == "y")
 		{
-			SaveDictionaryInFile(dictionary);
+			if (SaveDictionaryInFile(dictionary))
+			{
+				cout << "Changes are saved in file Program_data.txt" << endl;
+			}
 		}
 	}
 }
