@@ -4,7 +4,6 @@
 
 using namespace std;
 
-//print id - а если такой id есть и у функции и у переменной
 
 bool IsOperationSymbol(const string & str)
 {
@@ -56,12 +55,14 @@ void Calculator::Var()
 
 void Calculator::Let(const bool & isNumber)
 {
-	std::map<string, double>::iterator it = varMap.find(operationParts[1]);
+	std::map<string, vector<string>>::iterator itFuncMap = funcMap.find(operationParts[1]);
+	if (itFuncMap != funcMap.end())
+	{
+		cout << "error: id \"" << operationParts[1] << "\" already exists" << endl;
+		return;
+	}
 
-// 	if (!isNumber && it == varMap.end())
-// 	{
-// 		cout << "err(Let it == varMap.end())" << endl;
-// 	}
+	std::map<string, double>::iterator it = varMap.find(operationParts[1]);
 
 	if (isNumber)
 	{
@@ -85,21 +86,25 @@ void Calculator::Let(const bool & isNumber)
 			if (it == varMap.end())
 			{
 				varMap.insert(std::pair<string, double>(operationParts[1], newValueIterator->second));
-				//cout << "err(Let it == varMap.end())" << endl;
 			}
 			else it->second = newValueIterator->second;
 		}
 		else
 		{
-			//err: second variable is is not assigned
+			cout << "err: second variable is is not assigned" << endl;
 		}
 	}
 }
 
 void Calculator::Fn()
 {
-	//doesnow: add in map, not check if its in it
-	map<string, vector<string>>::iterator it = funcMap.find(operationParts[0]);
+	map<string, double>::iterator itVarMap = varMap.find(operationParts[1]);
+	if (itVarMap != varMap.end())
+	{
+		cout << "error: id \"" << operationParts[1] << "\" already exists" << endl;
+		return;
+	}
+	map<string, vector<string>>::iterator it = funcMap.find(operationParts[1]);
 	if (it == funcMap.end())
 	{
 		vector<string> functionParts; //create vec of function relations
@@ -111,17 +116,12 @@ void Calculator::Fn()
 	}
 	else
 	{
-
+		cout << "Error: func already exists" << endl;
 	}
-
-
-	//1 необьявлен обяз, 2и3 - обьявлены.
-	//TODO: что если будут не в том порядке, или будет чего-то нехватать
 }
 
 void Calculator::Print()
 {
-	//TODO: what if id is in both??
 	map<string, double>::iterator itVar = varMap.find(operationParts[1]);
 	if (itVar != varMap.end())
 	{	
@@ -134,10 +134,7 @@ void Calculator::Print()
 		{
 			cout << std::fixed << std::setprecision(2) << ComputeFuncValue(itFunc->first) << endl;
 		}
-		else
-		{
-			//notFoundCase
-		}
+		else cout << "Error: unknown id to print" << endl;
 	}
 }
 
@@ -161,20 +158,13 @@ bool Calculator::IsCommandCorrect()
 {
 	switch (operationParts.size())
 	{
-	case 0:
-		//isError = true;   ???
-		break;
 	case 1:
-		//printvars
-		//printfns
 		if (operationParts[0] == "printvars" || "printfns")
 		{
 			return true;
 		}
 		break;
-	case 2:
-		//var
-		//print		
+	case 2:	
 		if ((operationParts[0] == "var") && varMap.count(operationParts[1]) == 0)
 		{
 			return true;
@@ -189,8 +179,6 @@ bool Calculator::IsCommandCorrect()
 		}
 		break;
 	case 4:
-		//let
-		//fn
 		if (operationParts[0] == "let" && operationParts[2] == "=" && (IsNumber(operationParts[3]) || (varMap.count(operationParts[3]) == 1 && !IsNumber(operationParts[3]))))    //not justt varMap? "В качестве <идентификатора1>не может выступать имя функции."   (проверять count из обоих мап?  --> доп условия?)
 		{
 			return true;
@@ -201,7 +189,6 @@ bool Calculator::IsCommandCorrect()
 		}
 		break;
 	case 6:
-		//fn
 		if ((operationParts[0] == "fn" && varMap.count(operationParts[1]) == 0 && operationParts[2] == "=" && varMap.count(operationParts[3]) == 1 && IsOperationSymbol(operationParts[4]) && varMap.count(operationParts[5]) == 1))
 		{
 			return true;
@@ -220,92 +207,10 @@ void Calculator::ReadCommand(const string & line)
 
 	operationParts.clear();
 
-	bool isErr = false;
-
 	while (ist >> word)
 	{
-		isErr = false;
 		size_t operandVecSize = operationParts.size();
-
 		operationParts.push_back(word);
-		/*
-		if (operandVecSize == 0)
-		{
-			if (word == "var" || word == "let" || word == "fn" || word == "print" || word == "printvars" || word == "printfns")
-			{
-				operationParts.push_back(word);
-			}
-			else
-			{
-				isErr = true;
-			}
-		}
-		else
-		{
-
-			if (operationParts[0] == "var")
-			{
-				if (operandVecSize > 2 || IsNumber(word))
-				{
-					cout << "err" << endl;
-				}
-				if (varMap.count(operationParts[1]) != 0)
-				{
-					cout << "err" << endl;
-				}
-			}
-			else if (operationParts[0] == "let")
-			{
-				if (operandVecSize > 3 || (!IsNumber(word) && varMap.count(word) == 0))
-				{
-					cout << "err" << endl;
-				}
-			}
-			else if (operationParts[0] == "fn")
-			{
-				if (operandVecSize > 3 || funcMap.count(word) != 0)
-				{
-
-				}
-				if (operationParts.size() == 3)
-				{
-
-				}
-				else if (operationParts.size() == 5)
-				{
-					if (varMap.count(operationParts[2]) == 0 || varMap.count(operationParts[4]) == 0) //МОЖЕТ ЛИ БЫТЬ ID2 и ID3 ФУНКЦИЕЙ? ИЛИ ТОЛЬКО ПЕРЕМЕННОЙ
-					{
-
-					}
-					if (!(operationParts[3] != "+" && operationParts[3] != "-" && operationParts[3] != "*" && operationParts[3] != "/"))
-					{
-
-					}
-				}
-			}
-			else if (operationParts[0] == "print")
-			{
-				if (operandVecSize > )
-				{
-
-				}
-			}
-			else if (operationParts[0] == "printvars")
-			{
-				if (operandVecSize > )
-				{
-
-				}
-			}
-			else if (operationParts[0] == "printfns")
-			{
-				if (operandVecSize > )
-				{
-				}
-			}
-
-		}
-		*/
 	}
 };
 

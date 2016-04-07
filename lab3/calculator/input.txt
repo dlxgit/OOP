@@ -1,0 +1,3 @@
+let x = 2
+fn z = x
+let z = 3

@@ -23,12 +23,7 @@ public:
 
 	map<string, double> varMap;
 	map<string, vector<string>> funcMap;
-
 	vector<string> operationParts;
-
-	void AddVar();
-
-	void RenameVar();
 
 	void ReadCommand(const string & line);
 

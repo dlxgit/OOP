@@ -14,23 +14,16 @@
 using namespace std;
 
 
-/*	
-	printvars
-	Выводит в stdout имена и значения всех ранее объявленных переменных, отсортированных по алфавиту, по одному в каждой строке в следующем формате:
-*/
-
-
 
 int main()
 {
-	//Calculator calc();
-	Calculator calculator;
 	ifstream inputFile("input.txt");
 	if (!inputFile.is_open())
 	{
 		cout << "input file is incorrect" << endl;
 	}
 	
+	Calculator calculator;
 	string line;
 	while (std::getline(inputFile, line))
 	{
@@ -39,10 +32,8 @@ int main()
 		{
 			calculator.ProcessCommand();
 		}
-		else cout << "err: " << //word << 
-		endl;
+		else cout << "error: command is incorrect" << endl;
 	}
-	
 
 	return 0;
 }
