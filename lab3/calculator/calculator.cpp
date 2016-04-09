@@ -4,6 +4,7 @@
 
 using namespace std;
 
+//todo: string -> enum
 
 bool IsOperationSymbol(const string & str)
 {
@@ -21,30 +22,64 @@ double Calculator::ComputeFuncValue(const string & funcName)
 	map<string, vector<string>>::iterator it = funcMap.find(funcName);
 	if (it->second.size() == 1)
 	{
-		map<string, double>::iterator itResult = varMap.find(it->second[0]);
-		funcValue = itResult->second;
+		map<string, vector<string>>::iterator funcItOperand = funcMap.find(it->second[0]);
+
+		if (funcItOperand == funcMap.end())
+		{
+			map<string, double>::iterator itResult = varMap.find(it->second[0]);
+			funcValue = itResult->second;
+		}
+		else
+		{
+			funcValue = ComputeFuncValue(funcItOperand->first);
+		}
+		return funcValue;
+	}
+
+	//calculating leftOperand
+	double leftValue;
+	map<string, vector<string>>::iterator funcItLeftOperand = funcMap.find(it->second[0]);
+	if (funcItLeftOperand != funcMap.end())
+	{
+		leftValue = ComputeFuncValue(funcItLeftOperand->first);
 	}
 	else
 	{
-		map<string, double>::iterator itLeftOperand = varMap.find(it->second[0]);
-		map<string, double>::iterator itRightOperand = varMap.find(it->second[0]);
-		if (it->second[1] == "+")
-		{
-			funcValue = itLeftOperand->second + itRightOperand->second;
-		}
-		else if (it->second[1] == "-")
-		{
-			funcValue = itLeftOperand->second - itRightOperand->second;
-		}
-		else if (it->second[1] == "*")
-		{
-			funcValue = itLeftOperand->second * itRightOperand->second;
-		}
-		else if (it->second[1] == "/")
-		{
-			funcValue = itLeftOperand->second / itRightOperand->second;
-		}
+		map<string, double>::iterator varItLeftOperand = varMap.find(it->second[0]);
+		leftValue = varItLeftOperand->second;
 	}
+
+	//calculating rightOperand
+	double rightValue;
+	map<string, vector<string>>::iterator funcItRightOperand = funcMap.find(it->second[2]);
+	if (funcItRightOperand != funcMap.end())
+	{
+		rightValue = ComputeFuncValue(funcItRightOperand->first);
+	}
+	else
+	{
+		map<string, double>::iterator varItRightOperand = varMap.find(it->second[2]);
+		rightValue = varItRightOperand->second;
+	}
+
+	//calculating value of function
+	if (it->second[1] == "+")
+	{
+		funcValue = leftValue + rightValue;
+	}
+	else if (it->second[1] == "-")
+	{
+		funcValue = leftValue - rightValue;
+	}
+	else if (it->second[1] == "*")
+	{
+		funcValue = leftValue * rightValue;
+	}
+	else if (it->second[1] == "/")
+	{
+		funcValue = leftValue / rightValue;
+	}
+
 	return funcValue;
 }
 
@@ -64,6 +99,7 @@ void Calculator::Let(const bool & isNumber)
 
 	std::map<string, double>::iterator it = varMap.find(operationParts[1]);
 
+
 	if (isNumber)
 	{
 		double numValue = stod(operationParts[3]);
@@ -80,19 +116,33 @@ void Calculator::Let(const bool & isNumber)
 	}
 	else
 	{
-		std::map<string, double>::iterator newValueIterator = varMap.find(operationParts[3]);
-		if (newValueIterator != varMap.end())
+		double newValue;
+		//calculating value of new variable
+
+		if (funcMap.count(operationParts[3]) == 1) //if let var = function
 		{
-			if (it == varMap.end())
+			newValue = ComputeFuncValue(operationParts[3]);
+		}
+		else //if let var = var
+		{
+			std::map<string, double>::iterator varMapIterator = varMap.find(operationParts[3]);
+			if (varMapIterator != varMap.end())
 			{
-				varMap.insert(std::pair<string, double>(operationParts[1], newValueIterator->second));
+				newValue = varMapIterator->second;
 			}
-			else it->second = newValueIterator->second;
+			else
+			{
+				cout << "Error: second operand is not assigned" << endl;
+				return;
+			}
 		}
-		else
+
+		//adding new element in variable's Map
+		if (it == varMap.end())
 		{
-			cout << "err: second variable is is not assigned" << endl;
+			varMap.insert(std::pair<string, double>(operationParts[1], newValue));
 		}
+		else it->second = newValue;
 	}
 }
 
@@ -165,35 +215,40 @@ bool Calculator::IsCommandCorrect()
 		}
 		break;
 	case 2:	
-		if ((operationParts[0] == "var") && varMap.count(operationParts[1]) == 0)
+		if (operationParts[0] == "var" && varMap.count(operationParts[1]) == 0)
 		{
 			return true;
 		}
-		if ((operationParts[0] == "print") && varMap.count(operationParts[1]) == 1)
-		{
-			return true;
-		}
-		if ((operationParts[0] == "print") && funcMap.count(operationParts[1]) == 1)
+		if (operationParts[0] == "print" && (varMap.count(operationParts[1]) == 1 || funcMap.count(operationParts[1]) == 1))
 		{
 			return true;
 		}
 		break;
 	case 4:
-		if (operationParts[0] == "let" && operationParts[2] == "=" && (IsNumber(operationParts[3]) || (varMap.count(operationParts[3]) == 1 && !IsNumber(operationParts[3]))))    //not justt varMap? "В качестве <идентификатора1>не может выступать имя функции."   (проверять count из обоих мап?  --> доп условия?)
+	{
+		bool isRightOperandDefined = !(varMap.count(operationParts[3]) == 1 && funcMap.count(operationParts[3]) == 1);
+		if (operationParts[0] == "let" && operationParts[2] == "=" && (IsNumber(operationParts[3]) || (isRightOperandDefined && !IsNumber(operationParts[3]))))    //not justt varMap? "В качестве <идентификатора1>не может выступать имя функции."   (проверять count из обоих мап?  --> доп условия?)
 		{
 			return true;
 		}
-		if ((operationParts[0] == "fn" && varMap.count(operationParts[1]) == 0 && operationParts[2] == "=" && varMap.count(operationParts[3]) == 1))
+		//if it is correct function and consists of defined as either variable or function
+		if ((operationParts[0] == "fn" && varMap.count(operationParts[1]) == 0 && operationParts[2] == "=") && isRightOperandDefined)
 		{
 			return true;
 		}
 		break;
+	}
 	case 6:
-		if ((operationParts[0] == "fn" && varMap.count(operationParts[1]) == 0 && operationParts[2] == "=" && varMap.count(operationParts[3]) == 1 && IsOperationSymbol(operationParts[4]) && varMap.count(operationParts[5]) == 1))
+	{
+		//true if both left and right function's operands are defined as variables/functions
+		bool areOperandsDefined = (varMap.count(operationParts[3]) == 1 || funcMap.count(operationParts[3]) == 1)
+			&& (varMap.count(operationParts[5]) == 1 || funcMap.count(operationParts[5]) == 1);
+		if (operationParts[0] == "fn" && varMap.count(operationParts[1]) == 0 && operationParts[2] == "=" && IsOperationSymbol(operationParts[4]) && areOperandsDefined)
 		{
 			return true;
 		}
 		break;
+	}
 	default:
 		break;
 	} 

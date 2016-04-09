@@ -32,7 +32,15 @@ int main()
 		{
 			calculator.ProcessCommand();
 		}
-		else cout << "error: command is incorrect" << endl;
+		else
+		{
+			cout << "error: command is incorrect (";
+			for (auto elem : calculator.operationParts)
+			{
+				cout << elem << " ";
+			}
+			cout << ")" << endl;
+		}
 	}
 
 	return 0;
