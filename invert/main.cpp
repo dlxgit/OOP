@@ -6,7 +6,6 @@
 #include <iomanip>
 #include <array>
 
-
 typedef std::array<std::array<double, 2>, 2> Matrix2x2; //for cofactor
 typedef std::array<std::array<double, 3>, 3> Matrix3x3; //for rest matrixes
 
@@ -63,11 +62,12 @@ Matrix2x2 ComputeCofactor(const Matrix3x3 & matrix	, const size_t & i, const siz
 double ComputeCellOfInvertedMatrix(const Matrix3x3 & matrix, const double & det, const size_t & i, const size_t & j)  //value of [i][j] element of inverted matrix
 {
 	Matrix2x2 cofactor = ComputeCofactor(matrix, i, j);
-	double cofValue = (cofactor[0][0] * cofactor[1][1] - cofactor[0][1] * cofactor[1][0]);
-	return pow(-1, i + j) * cofValue / det;
+	double cofactorDeterminant = (cofactor[0][0] * cofactor[1][1] - cofactor[0][1] * cofactor[1][0]);
+
+	return ((i + j) % 2 == 0) ? (cofactorDeterminant / det) : (-cofactorDeterminant / det);
 }
 
-Matrix3x3 ReadMatrixFromFile(const std::string & fileName, bool & isError)
+Matrix3x3 ReadMatrixFromFile(const std::string & fileName)
 {
 	Matrix3x3 matrix = Matrix3x3();
 
@@ -75,10 +75,9 @@ Matrix3x3 ReadMatrixFromFile(const std::string & fileName, bool & isError)
 	std::ifstream inputFile(fileName);
 	if (!inputFile.is_open())
 	{
-		isError = true;
-		return matrix;
+		throw std::ios_base::failure("Could not open inputFile");
 	}
-
+	
 	std::string line;
 	size_t lineCount = 0;
 	while (std::getline(inputFile, line))
@@ -86,62 +85,40 @@ Matrix3x3 ReadMatrixFromFile(const std::string & fileName, bool & isError)
 		size_t numCount = 0;
 		double number;
 		std::istringstream iss(line);
-		while (lineCount < 3 && numCount < 3 && iss >> number)
+		while (lineCount < 3 && numCount < 4 && iss >> number)
 		{
-			matrix[lineCount][numCount] = number;
+			if (numCount < 3)
+			{
+				matrix[lineCount][numCount] = number;
+			}
 			numCount++;
 		}
 		if (numCount != 3)
 		{
-			std::cout << "Error: incorrect number of elements in matrix" << std::endl;
-			isError = true;
-			return matrix;
+			throw std::invalid_argument("Incorrect matrix dimension");
 		}
 		lineCount++;
 	}
 
 	if (lineCount != 3)
 	{
-		isError = true;
-		return matrix;
+		throw std::invalid_argument("Incorrect matrix dimension");
 	}
-
 	return matrix;
 }
 
-Matrix3x3 ComputeInvertedMatrix(const std::string & fileName, bool & wasError)
+Matrix3x3 ComputeInvertedMatrix(const Matrix3x3 & sourceMatrix, const double & det)
 {
-	bool isError = false;
-
-	//ReadMatrix
-	Matrix3x3 matrix = ReadMatrixFromFile(fileName, isError);
-	if (isError)
-	{
-		wasError = true;
-		return matrix;
-	}
-
-	//computing Det
-	double det = ComputeDeterminant(matrix);
-	if (det == 0)
-	{
-		std::cout << "Impossible to calculate inverted matrix (det = 0)." << std::endl;
-		wasError = true;
-		return matrix;
-	}
-	
-	//computing InvertedMatrix
 	Matrix3x3 invertedMatrix;
 	for (size_t i = 0; i < 3; i++)
 	{
 		for (size_t j = 0; j < 3; j++)
 		{
-			invertedMatrix[j][i] = ComputeCellOfInvertedMatrix(matrix, det, i, j);
+			invertedMatrix[j][i] = ComputeCellOfInvertedMatrix(sourceMatrix, det, i, j);
 		}
 	}
 	return invertedMatrix;
 }
-
 
 bool WriteMatrixInFile(const Matrix3x3 & matrix)
 {
@@ -184,14 +161,29 @@ int main(int argc, char * argv[])
 		std::cout << "incorrect program execution.\nUsage: invert.exe <fileName>" << std::endl;
 		return 1;
 	}
-	
-	bool isError = false;
-	Matrix3x3 resultMatrix = ComputeInvertedMatrix(argv[1], isError);
-	if(isError)
+
+	try
 	{
-		return 1;
+		Matrix3x3 sourceMatrix = ReadMatrixFromFile(argv[1]);
+
+		double det = ComputeDeterminant(sourceMatrix);
+		if (det == 0)
+		{
+			return 2;
+		}
+		Matrix3x3 resultMatrix = ComputeInvertedMatrix(sourceMatrix, det);
+
+		PrintMatrix(resultMatrix);
+		WriteMatrixInFile(resultMatrix);
 	}
-	PrintMatrix(resultMatrix);
-	WriteMatrixInFile(resultMatrix);
+	catch (const std::ios_base::failure & error) 
+	{
+		std::cout << error.what() << std::endl;
+	}
+	catch (const std::invalid_argument & error)
+	{
+		std::cout << error.what() << std::endl;
+		return 3;
+	}
 	return 0;
 }
