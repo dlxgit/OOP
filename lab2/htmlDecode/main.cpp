@@ -3,8 +3,9 @@
 
 int main()
 {	
-	std::string html = ReadString();
+	std::string html;
+	std::getline(std::cin, html);
 	std::string resultString = HtmlDecode(html);
-	PrintResult(resultString);
+	std::cout << "Result:\n" << resultString << std::endl;
     return 0;
 };

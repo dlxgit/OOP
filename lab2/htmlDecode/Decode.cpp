@@ -1,16 +1,6 @@
 #include "stdafx.h"
 #include "Decode.h"
 
-enum State
-{
-	NO_MATCH,
-	BEGIN,
-	QUOT,
-	APOS,
-	LT,
-	GT,
-	AMP
-};
 
 std::string HtmlDecode(std::string const & html)
 {
@@ -50,16 +40,4 @@ std::string HtmlDecode(std::string const & html)
 		}
 	}
 	return resultStr;
-}
-
-std::string ReadString()
-{
-	std::string line;
-	std::getline(std::cin, line);
-	return line;
-}
-
-void PrintResult(std::string const & resultStr)
-{
-	std::cout << "Result:\n" << resultStr << std::endl;
 }
