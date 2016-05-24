@@ -1,14 +1,8 @@
+#include "stdafx.h"
 #include "Ccomplex.h"
-#include <math.h>
-#include <float.h>
 
-/*
-// инициализация комплексного числа значениями действительной и мнимой частей
-CComplex::CComplex(double real = 0, double image = 0);
-{
 
-}
-*/
+
 
 // возвращает действительную часть комплексного числа
 double CComplex::Re() const
@@ -31,91 +25,133 @@ double CComplex::GetMagnitude() const
 // возвращает аргумент комплексного числа
 double CComplex::GetArgument() const
 {
-	return atan(m_imaginaryPart / m_realPart);
+	double real = Re();
+	double image = Im();
+
+	if (image == 0)
+	{
+		if (real < 0)
+		{
+			return M_PI;
+		}
+		if (real > 0)
+		{
+			return 0;
+		}
+		return 0;
+	}
+
+	if (real > 0)
+	{
+		return atan(m_imaginaryPart / m_realPart);
+	}
+	if (real < 0 && image >= 0)
+	{
+		return M_PI + atan(m_imaginaryPart / m_realPart);
+	}
+	if (real < 0 && image < 0)
+	{
+		return -M_PI + atan(m_imaginaryPart / m_realPart);
+	}
+	if (real == 0)
+	{
+		if (image > 0)
+		{
+			return M_PI / 2;
+		}
+		if (image < 0)
+		{
+			return -M_PI / 2;
+		}
+	}
+	return 0;
 }
 
-
-const CComplex& CComplex::operator+(const CComplex& right)
+CComplex const operator+(const CComplex& left, const CComplex& right)
 {
-	return CComplex(this->m_realPart + right.m_realPart, this->m_imaginaryPart + right.m_imaginaryPart);
+	return CComplex(left.Re() + right.Re(), left.Im() + right.Im());
 }
 
-
-const CComplex& CComplex::operator-(const CComplex& right)
+CComplex const operator-(const CComplex& left, const CComplex& right)
 {
-	return CComplex(this->m_realPart - right.m_realPart, this->m_imaginaryPart - right.m_imaginaryPart);
+	return CComplex(left.Re() - right.Re(), left.Im() - right.Im());
 }
 
-
-const CComplex& CComplex::operator*(const CComplex& right)
+CComplex const operator*(const CComplex& left, const CComplex& right)
 {
-	return CComplex(this->m_realPart - right.m_realPart, this->m_imaginaryPart - right.m_imaginaryPart);
+	return CComplex(left.Re() * right.Re() - left.Im() * right.Im(),
+		left.Re() * right.Im() + left.Im() * right.Re());
 }
 
-
-const CComplex& CComplex::operator/(const CComplex& right)
+CComplex const operator/(const CComplex& left, const CComplex& right)
 {
-	return CComplex((this->m_realPart * right.m_realPart + this->m_imaginaryPart * right.m_imaginaryPart) / (right.m_realPart + right.m_imaginaryPart),
-		(right.m_realPart * this->m_imaginaryPart) / (this->m_imaginaryPart * this->m_imaginaryPart + right.m_imaginaryPart * right.m_imaginaryPart));
+	if (right.Re() == 0 && right.Im() == 0)
+	{
+		return CComplex(std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity());
+	}
+
+	return CComplex((left.Re() * right.Re() + left.Im() * right.Im()) / (right.Re() * right.Re() + right.Im() * right.Im()), 
+		(right.Re() * left.Im() - right.Im() * left.Re()) / (right.Re() * right.Re() + right.Im() * right.Im()));
 }
 
-
-const CComplex& CComplex::operator+()
+CComplex const CComplex::operator+()const
 {
 	return *this;
 }
 
-
-const CComplex& CComplex::operator-()
+CComplex const CComplex::operator-()const
 {
-	return CComplex(-this->m_realPart, -this->m_imaginaryPart);
+	return CComplex(-this->Re(), -this->Im());
 }
 
-
-CComplex& CComplex::operator+=(const CComplex& right)
+CComplex & CComplex::operator+=(const CComplex& right)
 {
-	return CComplex(this->m_realPart + right.m_realPart, this->m_imaginaryPart + this->m_imaginaryPart);
-}
-
-
-CComplex& CComplex::operator-=(const CComplex& right)
-{
-	this->m_realPart = this->m_realPart - right.m_realPart;
-	this->m_imaginaryPart = this->m_imaginaryPart - this->m_imaginaryPart;
+	m_realPart += right.m_realPart;
+	m_imaginaryPart += right.m_imaginaryPart;
 	return *this;
 }
 
 
-CComplex& CComplex::operator*=(const CComplex& right)
+CComplex & CComplex::operator-=(const CComplex & right)
 {
-	this->m_realPart = this->m_realPart * right.m_realPart - this->m_imaginaryPart * right.m_imaginaryPart;
-	this->m_imaginaryPart = this->m_realPart * right.m_imaginaryPart + this->m_imaginaryPart * right.m_realPart;
+	m_realPart -= right.m_realPart;
+	m_imaginaryPart -= right.m_imaginaryPart;
 	return *this;
 }
 
-
-CComplex& CComplex::operator/=(const CComplex& right)
+CComplex & CComplex::operator*=(const CComplex & right)
 {
-	this->m_realPart = (this->m_realPart * right.m_realPart + this->m_imaginaryPart * right.m_imaginaryPart) / (right.m_realPart + right.m_imaginaryPart);
-	this->m_imaginaryPart = (right.m_realPart * this->m_imaginaryPart) / (this->m_imaginaryPart * this->m_imaginaryPart + right.m_imaginaryPart * right.m_imaginaryPart);
+	double real = m_realPart * right.m_realPart - m_imaginaryPart * right.m_imaginaryPart;
+	double image = m_realPart * right.m_imaginaryPart + m_imaginaryPart * right.m_realPart;
+	m_realPart = real;
+	m_imaginaryPart = image;
 	return *this;
 }
 
-
-const bool & CComplex::operator==(const CComplex& right)
+CComplex & CComplex::operator/=(const CComplex & right)
 {
-	bool numbersAreEqual = fabs(this->m_realPart - right.m_realPart) < DBL_MIN && fabs(this->m_imaginaryPart - right.m_imaginaryPart) < DBL_MIN;
+	if (right.Re() == 0 && right.Im() == 0)
+	{
+		m_realPart = std::numeric_limits<double>::infinity();
+		m_imaginaryPart = std::numeric_limits<double>::infinity();
+	}
+	else
+	{
+		double realPart = (m_realPart * right.m_realPart + m_imaginaryPart * right.m_imaginaryPart) / (right.m_realPart * right.m_realPart + right.m_imaginaryPart * right.m_imaginaryPart);
+		double imaginaryPart = (right.m_realPart * m_imaginaryPart - right.m_imaginaryPart * m_realPart) / (right.m_realPart * right.m_realPart + right.m_imaginaryPart * right.m_imaginaryPart);
+		m_realPart = realPart;
+		m_imaginaryPart = imaginaryPart;
+	}
+	return *this;
+}
+
+bool const operator==(const CComplex& left, const CComplex& right)
+{
+	bool numbersAreEqual = fabs(left.Re() - right.Re()) < DBL_MIN && fabs(left.Im() - right.Im()) < DBL_MIN;
 	return numbersAreEqual;
 }
 
-
-const bool & CComplex::operator!=(const CComplex& right)
+bool const operator!=(const CComplex& left, const CComplex& right)
 {
-	return !((*this) == right);
-}
-
-
-void CComplex::operator<<(const CComplex& right)
-{
-	std::cout << this->m_realPart << this->m_imaginaryPart << std::endl;
+	return !(left == right);
 }
