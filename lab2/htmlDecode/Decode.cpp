@@ -8,28 +8,27 @@ std::string HtmlDecode(std::string const & html)
 
 	for (size_t i = 0; i < html.size(); i++)
 	{
-		std::string aa = html.substr(i, 4);
-		if (std::string(html.substr(i, 6)) == std::string("&quot;"))
+		if (html.compare(i, 6,"&quot;") == 0)
 		{
 			resultStr.append("\"");
 			i += 5;
 		}
-		else if (std::string(html.substr(i, 6)) == std::string("&apos;"))
+		else if (html.compare(i, 6, "&apos;") == 0)
 		{
 			resultStr.append("'");
 			i += 5;
 		}
-		else if (std::string(html.substr(i, 4)) == std::string("&lt;"))
+		else if (html.compare(i, 4,"&lt;") == 0)
 		{
 			resultStr.append("<");
 			i += 3;
 		}
-		else if (std::string(html.substr(i, 4)) == std::string("&gt;"))
+		else if (html.compare(i, 4, "&gt;") == 0)
 		{
 			resultStr.append(">");
 			i += 3;
 		}
-		else if (std::string(html.substr(i, 5)) == std::string("&amp;"))
+		else if (html.compare(i, 5, "&amp;") == 0)
 		{
 			resultStr.append("&");
 			i += 4;
