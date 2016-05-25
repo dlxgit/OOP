@@ -3,24 +3,24 @@
 #include <iomanip>
 #include "Calculate.h"
 
-const static size_t CALC_PRECISION = 4;  //number of digits after "."
-
 
 struct QuadraticEquationSolutionPrinter : public boost::static_visitor<void>
 {
-	QuadraticEquationSolutionPrinter(std::ofstream & strm)
+	QuadraticEquationSolutionPrinter(std::ofstream & strm, const unsigned & precision)
 		:m_strm(strm)
-	{}
+	{
+		calculatingPrecision = precision;
+	}
 
 	void operator() (double x)
 	{
-		m_strm << std::fixed << std::setprecision(CALC_PRECISION) << x << std::endl;
+		m_strm << std::fixed << std::setprecision(calculatingPrecision) << x << std::endl;
 
 	}
 
 	void operator() (TwoRoos roots)
 	{
-		m_strm << std::fixed << std::setprecision(CALC_PRECISION) << roots.first << "; " << roots.second << std::endl;
+		m_strm << std::fixed << std::setprecision(calculatingPrecision) << roots.first << "; " << roots.second << std::endl;
 	}
 
 	void operator() (NoRealRoots)
@@ -35,4 +35,5 @@ struct QuadraticEquationSolutionPrinter : public boost::static_visitor<void>
 
 private:
 	std::ostream & m_strm;
+	unsigned calculatingPrecision;
 };

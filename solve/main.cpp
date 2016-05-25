@@ -29,7 +29,7 @@ int main(int argc, char * argv[])
 	auto result = ComputeRoots(a, b, c);
 	
 	std::ofstream outputFile("output.txt");
-	QuadraticEquationSolutionPrinter printer(outputFile);
+	QuadraticEquationSolutionPrinter printer(outputFile, 4);
 	result.apply_visitor(printer);
 	if (!outputFile.flush())
 	{
