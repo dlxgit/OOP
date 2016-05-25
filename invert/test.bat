@@ -1,8 +1,4 @@
 REM
-invert.exe input.txt output.txt
-IF NOT ERRORLEVEL 1 GOTO err
-
-REM
 Debug\invert.exe test_successful1.txt
 IF ERRORLEVEL 1 GOTO err
 FC /B output.txt test_successful1_out.txt

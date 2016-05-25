@@ -35,7 +35,7 @@ double ComputeDeterminant(const Matrix3x3 & matrix)
 		);
 }
 
-Matrix2x2 ComputeCofactor(const Matrix3x3 & matrix	, const size_t & i, const size_t & j)
+Matrix2x2 ComputeCofactor(const Matrix3x3 & matrix, unsigned  i, unsigned j)
 {
 	Matrix2x2 cofactor;
 	size_t xPos = 0; //x and y - indexes of Cofactor (for filling)
@@ -59,7 +59,7 @@ Matrix2x2 ComputeCofactor(const Matrix3x3 & matrix	, const size_t & i, const siz
 	return cofactor;
 }
 
-double ComputeCellOfInvertedMatrix(const Matrix3x3 & matrix, const double & det, const size_t & i, const size_t & j)  //value of [i][j] element of inverted matrix
+double ComputeCellOfInvertedMatrix(const Matrix3x3 & matrix, const double & det, unsigned i, unsigned j)  //value of [i][j] element of inverted matrix
 {
 	Matrix2x2 cofactor = ComputeCofactor(matrix, i, j);
 	double cofactorDeterminant = (cofactor[0][0] * cofactor[1][1] - cofactor[0][1] * cofactor[1][0]);
@@ -107,8 +107,13 @@ Matrix3x3 ReadMatrixFromFile(const std::string & fileName)
 	return matrix;
 }
 
-Matrix3x3 ComputeInvertedMatrix(const Matrix3x3 & sourceMatrix, const double & det)
+Matrix3x3 ComputeInvertedMatrix(const Matrix3x3 & sourceMatrix)
 {
+	double det = ComputeDeterminant(sourceMatrix);
+	if (det == 0)
+	{
+		throw std::invalid_argument("Det = 0");
+	}
 	Matrix3x3 invertedMatrix;
 	for (size_t i = 0; i < 3; i++)
 	{
@@ -165,13 +170,7 @@ int main(int argc, char * argv[])
 	try
 	{
 		Matrix3x3 sourceMatrix = ReadMatrixFromFile(argv[1]);
-
-		double det = ComputeDeterminant(sourceMatrix);
-		if (det == 0)
-		{
-			return 2;
-		}
-		Matrix3x3 resultMatrix = ComputeInvertedMatrix(sourceMatrix, det);
+		Matrix3x3 resultMatrix = ComputeInvertedMatrix(sourceMatrix);
 
 		PrintMatrix(resultMatrix);
 		WriteMatrixInFile(resultMatrix);
@@ -183,6 +182,10 @@ int main(int argc, char * argv[])
 	catch (const std::invalid_argument & error)
 	{
 		std::cout << error.what() << std::endl;
+		if (strcmp(error.what(), "Det = 0") == 0)
+		{
+			return 2;
+		}
 		return 3;
 	}
 	return 0;
