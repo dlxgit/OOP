@@ -1,10 +1,10 @@
 #pragma once
-#include "ISolidShape.h"
+#include "CSolidShape.h"
 #include "CPoint.h"
 #define _USE_MATH_DEFINES 
 #include <math.h>
 
-class CCircle : public ISolidShape
+class CCircle : public CSolidShape
 {
 public:
 	CCircle(CPoint & point, const double & radius, const std::string & outlineColor, const std::string & fillColor);

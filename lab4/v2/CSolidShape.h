@@ -4,5 +4,6 @@
 
 class CSolidShape : public ISolidShape, CShape
 {
-
+protected:
+	std::string m_fillColor;
 };

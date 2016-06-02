@@ -3,7 +3,7 @@
 #include "IShape.h"
 #include "CPoint.h"
 
-class CLineSegment : public IShape
+class CLineSegment : public CShape
 {
 public:
 	CLineSegment(const CPoint & first, const CPoint & second, const std::string & color = "#000000");
@@ -14,10 +14,9 @@ public:
 	double GetPerimeter() const override;
 
 	std::string ToString() const override;
-	std::string GetOutlineColor() const override;
 
 private:
 	CPoint m_firstPoint;
 	CPoint m_secondPoint;
-	std::string m_color;
+	std::string m_outlineColor;
 };

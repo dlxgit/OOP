@@ -14,7 +14,9 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 
-/*
+//TODO: CRectangle constructor setOutlineColor();
+
+
 std::shared_ptr<CShape> AddNewShape(const std::vector<std::string> & inputParts)
 {
 	if (inputParts[0].compare(std::string("point")) && inputParts.size() == 4)
@@ -43,7 +45,7 @@ std::shared_ptr<CShape> AddNewShape(const std::vector<std::string> & inputParts)
 	}
 	return nullptr;
 }
-*/
+
 std::vector<std::shared_ptr<CShape>> InputShapes()
 {
 	std::vector<std::shared_ptr<CShape>> result;

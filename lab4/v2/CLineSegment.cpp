@@ -6,7 +6,7 @@ CLineSegment::CLineSegment(const CPoint & first, const CPoint & second, const st
 {
 	m_firstPoint = first;
 	m_secondPoint = second;
-	m_color = color;
+	m_outlineColor = color;
 }
 
 std::pair<CPoint, CPoint> CLineSegment::GetPoints() const
@@ -34,9 +34,4 @@ double CLineSegment::GetPerimeter() const
 std::string CLineSegment::ToString() const
 {
 	return std::string("LineSegment");
-}
-
-std::string CLineSegment::GetOutlineColor() const
-{
-	return m_color;
 }

@@ -5,5 +5,5 @@
 class ISolidShape : public IShape
 {
 public:
-	std::string GetFillColor();
+	std::string GetFillColor() const;
 };

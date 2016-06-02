@@ -9,8 +9,7 @@ public:
 	double GetArea() const override;
 	double GetPerimeter() const override;
 	std::string ToString() const override;
-	std::string GetOutlineColor() const override;
 private:
 	std::pair<double, double> m_position;
-	std::string m_color;
+	std::string m_outlineColor;
 };

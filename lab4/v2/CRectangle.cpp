@@ -6,7 +6,7 @@ CRectangle::CRectangle(const CPoint & position, const double & width, const doub
 	m_width = width;
 	m_height = height;
 	m_fillColor = fillColor;
-	m_outlineColor = outlineColor;
+	//SetOutlineColor(outlineColor);
 }
 
 std::string CRectangle::ToString() const

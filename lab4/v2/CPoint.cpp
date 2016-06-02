@@ -4,7 +4,7 @@
 CPoint::CPoint(const double & x, const double & y, const std::string & color)
 {
 	m_position = std::pair<double, double>(x, y);
-	m_color = color;
+	m_outlineColor = color;
 }
 
 std::pair<double, double> CPoint::GetPosition() const
@@ -26,9 +26,4 @@ double CPoint::GetPerimeter() const
 std::string CPoint::ToString() const
 {
 	return std::string("Point");
-}
-
-std::string CPoint::GetOutlineColor() const
-{
-	return m_color;
 }

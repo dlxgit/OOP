@@ -1,10 +1,10 @@
 #pragma once
-#include "ISolidShape.h"
+#include "CSolidShape.h"
 #include "CPoint.h"
 #include "CLineSegment.h"
 #include <array>
 
-class CTriangle : public ISolidShape
+class CTriangle : public CSolidShape
 {
 public:
 	CTriangle(const CPoint & firstPoint, const CPoint & secondPoint, const CPoint & thirdPoint, const std::string & fillColor, const std::string & outlineColor);
@@ -18,6 +18,5 @@ private:
 	CPoint m_firstPoint;
 	CPoint m_secondPoint;
 	CPoint m_thirdPoint;
-	std::string m_fillColor;
 	std::string m_outlineColor;
 };

@@ -4,10 +4,11 @@
 class CShape : public IShape
 {
 public:
-	std::string ToString() const override;
-	double GetArea() const override;
-	double GetPerimeter() const override;
-	std::string GetOutlineColor() const override;
-private:
+// 	double virtual GetArea() const = 0;
+// 	double virtual GetPerimeter() const = 0;
+// 	std::string virtual ToString() const = 0;
+	std::string GetOutlineColor() const;
+	void SetOutlineColor(const std::string & outlineColor);
+protected:
 	std::string m_outlineColor;
 };
