@@ -69,8 +69,6 @@ CCar::Direction CCar::GetDirection() const
 		return MOVE_BACK;
 	}
 	return MOVE_FRONT;
-
-
 }
 
 
