@@ -8,13 +8,7 @@ int main()
 	CCar car();
 
 	CCarController controller;
-	try
-	{
-		controller.HandleCommand();
-	}
-	catch(...)
-	{
-		std::cout << "Error: non-number element." << std::endl;
-	}
+	
+	controller.HandleCommand();
 	return 0;
 }

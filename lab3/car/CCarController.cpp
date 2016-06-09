@@ -20,7 +20,7 @@ void CCarController::PrintInfo() const
 	}
 	else if (dir == CCar::MOVE_FRONT)
 	{
-		std::cout << "MOVE_BACK" << std::endl;
+		std::cout << "MOVE_FRONT" << std::endl;
 	}
 	else
 	{
@@ -39,37 +39,44 @@ bool CCarController::HandleCommand()
 	std::string line = "0";
 	while (std::getline(std::cin, line))
 	{
-		if (line.empty())
+		try
 		{
-			break;
-		}
+			if (line.empty())
+			{
+				break;
+			}
 
-		boost::split(inputParts, line, boost::is_any_of("<>"));
-		if (inputParts.size() == 1 && inputParts[0] == std::string("Info"))
+			boost::split(inputParts, line, boost::is_any_of(" "));
+			if (inputParts.size() == 1 && inputParts[0] == std::string("Info"))
+			{
+				PrintInfo();
+			}
+			else if (inputParts.size() == 1 && inputParts[0] == std::string("EngineOn"))
+			{
+				m_car.TurnOnEngine();
+			}
+			else if (inputParts.size() == 1 && inputParts[0] == std::string("EngineOff"))
+			{
+				m_car.TurnOffEngine();
+			}
+			else if (inputParts.size() == 2 && inputParts[0] == std::string("SetGear"))
+			{
+				m_car.SetGear(std::stoi(inputParts[1]));
+			}
+			else if (inputParts.size() == 2 && inputParts[0] == std::string("SetSpeed"))
+			{
+				m_car.SetSpeed(std::stoi(inputParts[1]));
+			}
+			else
+			{
+				std::cout << "Error command" << std::endl;
+			}
+		}
+		catch (...)
 		{
-			PrintInfo();
+			std::cout << "Error: non-number element." << std::endl;
 		}
-		else if (inputParts.size() == 1 && inputParts[0] == std::string("EngineOn"))
-		{
-			m_car.TurnOnEngine();
-		}
-		else if (inputParts.size() == 1 && inputParts[0] == std::string("EngineOff"))
-		{
-			m_car.TurnOffEngine();
-		}
-		else if (inputParts.size() == 3 && inputParts[0] == std::string("SetGear"))
-		{
-			m_car.SetGear(std::stoi(inputParts[1]));
-		}
-		else if (inputParts.size() == 3 && inputParts[0] == std::string("SetSpeed"))
-		{
-			m_car.SetSpeed(std::stoi(inputParts[1]));
-		}
-		else
-		{			
-			std::cout << "Error command" << std::endl;
-			return false;
-		}
+		
 	}
 	return true;
 }
