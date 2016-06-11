@@ -2,6 +2,8 @@
 #include "stdafx.h"
 #include <string>
 #include <iostream>
+#include <array>
+
 
 class CCar
 {
@@ -24,8 +26,10 @@ public:
 	Direction GetDirection() const;
 
 private:
-	std::pair<int, int> GetSpeedRange(int gear) const;
+	std::array<int, 2> GetSpeedRange(int gear) const;
+	std::array<std::array<int, 2>, 7> m_speedRanges;
 
+	CCar::Direction m_direction;
 	bool m_isEngineTurnedOn;
 	int m_speed;
 	int m_gear;

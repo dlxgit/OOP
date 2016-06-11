@@ -1,0 +1,110 @@
+//var and = 5 print
+
+var z
+let z = 5
+print z
+
+
+
+
+
+//same without var
+
+let z = 5
+print z
+
+
+
+//func
+
+let z = 5
+let x = 5
+fn fnzx = z + x
+print fnzx
+
+var z
+let z = 3
+let x = z
+fn func = z + x
+print func
+
+
+//printvars
+
+let z = 5
+let x = 4
+let a = 3
+printvars
+
+
+//printfns
+
+let z = 5
+let x = 5
+fn fn1 = z + x
+fn a = z - x
+printfns
+
+
+//print element NAN?
+
+var z
+print z
+
+var z
+let x = z
+print x
+
+
+//summ NAN  //func with unassigned var
+
+var z
+var x
+fn func = z + x
+print func
+
+var z = 3
+let x = z
+fn func = z + x
+print func
+
+
+//incorrect data
+
+var z = 3
+print z -- err is catched, but not stopping work
+
+
+
+//calc uncassigned func ??(same as unassigned var) (no sense)
+
+
+
+
+//incorrect command name    (THINK: catches but not stops)
+
+//if var and func with same id - NEED NOT TO CREATE (IF VALID)
+var z
+let z = 3
+let x = 2
+fn z = x
+--catches, but no stops
+
+SWAP: (func -> var, var -> func)
+
+let x = 2
+fn z = x
+let z = 3  || var z   
+//W_O_R_K_S BUT SHOULDNT
+
+
+//need add func which can take another func
+
+
+
+
+let x = 2
+fn z = x
+fn zx = z
+print zx
+

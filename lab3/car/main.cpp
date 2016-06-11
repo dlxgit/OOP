@@ -5,10 +5,11 @@
 
 int main()
 {
-	CCar car();
+	CCar car;
 
 	CCarController controller;
-	
+	car.TurnOnEngine();
+	car.SetGear(-1);
 	controller.HandleCommand();
 	return 0;
 }

@@ -9,7 +9,7 @@
 
 struct CCarFixture
 {
-	CCar car;
+	CCar car = CCar();
 };
 
 
@@ -55,6 +55,14 @@ BOOST_FIXTURE_TEST_SUITE(Car, CCarFixture)
 		{
 			BOOST_CHECK(car.SetGear(1));
 			BOOST_CHECK_EQUAL(car.GetGear(), 1);
+		}
+
+		BOOST_AUTO_TEST_CASE(cant_change_gear_to_1_from_minus1_with_speed_20) //issueTest
+		{
+			BOOST_CHECK(car.SetGear(-1));
+			car.SetSpeed(20);
+			BOOST_CHECK(!car.SetGear(2));
+			BOOST_CHECK(car.GetGear(), -1);
 		}
 
 		BOOST_AUTO_TEST_CASE(can_change_gear_to_back_gear)

@@ -61,7 +61,20 @@ bool CCarController::HandleCommand()
 			}
 			else if (inputParts.size() == 2 && inputParts[0] == std::string("SetGear"))
 			{
-				m_car.SetGear(std::stoi(inputParts[1]));
+				if (!m_car.SetGear(std::stoi(inputParts[1])))
+				{
+					/*if (m_gear == 1 && GetSpeed() != 0)
+					{
+						std::cout << "Couldn't change gear(from -1 to 1 on speed)." << std::endl;
+						return false;
+					}
+					else if (m_gear > 1)
+					{
+						std::cout << "Couldn't change gear(from -1 to > 1)." << std::endl;
+						return false;
+					}
+					*/
+				}
 			}
 			else if (inputParts.size() == 2 && inputParts[0] == std::string("SetSpeed"))
 			{
@@ -76,7 +89,7 @@ bool CCarController::HandleCommand()
 		{
 			std::cout << "Error: non-number element." << std::endl;
 		}
-		
+
 	}
 	return true;
 }

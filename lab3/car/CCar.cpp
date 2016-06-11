@@ -6,6 +6,15 @@ CCar::CCar()
 	m_isEngineTurnedOn = false;
 	m_speed = 0;
 	m_gear = 0;
+
+	m_speedRanges  = std::array<std::array<int,2>, 7> 
+					{{{0, 20},
+					{-200, 200},
+					{0, 30},
+					{20, 50},
+					{30, 60},
+					{40, 90},
+					{50, 150 }}};
 }
 
 bool CCar::TurnOnEngine()
@@ -33,29 +42,13 @@ bool CCar::TurnOffEngine()
 	return false;
 }
 
-std::pair<int, int> CCar::GetSpeedRange(int gear) const
+std::array<int, 2> CCar::GetSpeedRange(int gear) const
 {
-	switch (gear)
+	if (gear >= -1 && gear < 6)
 	{
-	case -1:
-		return std::make_pair<int, int>(0, 20);
-		break;
-	case 0:
-		return std::make_pair<int, int>(-200, 200);
-	case 1:
-		return std::make_pair<int, int>(0, 30);
-	case 2:
-		return std::make_pair<int, int>(20, 50);
-	case 3:
-		return std::make_pair<int, int>(30, 60);
-	case 4:
-		return std::make_pair<int, int>(40, 90);
-	case 5:
-		return std::make_pair<int, int>(50, 150);
-	default:
-		break;
+		return m_speedRanges[gear + 1];
 	}
-	return std::make_pair<int, int>(-1, -1);
+	return {-1, -1};
 }
 
 CCar::Direction CCar::GetDirection() const
@@ -85,11 +78,20 @@ bool CCar::SetGear(int gear)
 		return false;
 	}
 
-	if (currentGear == -1 && gear == 1 && GetSpeed() != 0)
+	if (currentGear == -1)
 	{
-		std::cout << "Couldn't change gear(from -1 to 1 on speed)." << std::endl;
-		return false;
+		if (gear == 1 && GetSpeed() != 0)
+		{
+			std::cout << "Couldn't change gear(from -1 to 1 on speed)." << std::endl;
+			return false;
+		}
+		else if (gear > 1)
+		{
+			std::cout << "Couldn't change gear(from -1 to > 1)." << std::endl;
+			return false;
+		}		
 	}
+
 	if (gear == -1 && ((currentGear == 0 || currentGear == 1) && GetSpeed() != 0))
 	{
 		std::cout << "Couldn't change gear(from -1 to 1 on speed)." << std::endl;
@@ -98,8 +100,8 @@ bool CCar::SetGear(int gear)
 
 
 	int currentSpeed = GetSpeed();
-	std::pair<int, int> speedRange = GetSpeedRange(gear);
-	if (currentSpeed >= speedRange.first && currentSpeed <= speedRange.second)
+	std::array<int,2> speedRange = GetSpeedRange(gear);
+	if (currentSpeed >= speedRange[0] && currentSpeed <= speedRange[1])
 	{
 		m_gear = gear;
 		return true;
@@ -120,8 +122,8 @@ bool CCar::SetSpeed(int speed)
 		std::cout << "Couldn't change speed(can't increase speed on 0-gear)." << std::endl;
 		return false;
 	}
-	std::pair<int, int> speedRange = GetSpeedRange(GetGear());
-	if (speed >= speedRange.first && speed <= speedRange.second)
+	std::array<int, 2> speedRange = GetSpeedRange(GetGear());
+	if (speed >= speedRange[0] && speed <= speedRange[1])
 	{
 		m_speed = speed;
 		return true;
