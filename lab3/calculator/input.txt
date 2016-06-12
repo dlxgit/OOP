@@ -1,13 +1,17 @@
-let v0 = 0
-let v1 = 1
-fn fib0 = v0
-fn fib1 = v1
-fn fib2 = fib1 + fib0
-fn fib3 = fib2 + fib1
-fn fib4 = fib3 + fib2
-fn fib5 = fib4 + fib3
-fn fib6 = fib5 + fib4
-printfns
-let v0 = 1
-let v2 = 1
+var a 
+var c 
+let a = 2 
+let b = a 
+let b = 3 
+let d = 4 
+let e = -6..35 
+fn A = a + b 
+let c = -1 
+fn C = A + c 
+fn D = C + d 
+fn E = D * e 
+print E 
+print a 
+print vd 
+printvars 
 printfns
