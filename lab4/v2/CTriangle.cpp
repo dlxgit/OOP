@@ -1,5 +1,5 @@
 #include "CTriangle.h"
-
+#include "stdafx.h"
 
 CTriangle::CTriangle(const CPoint & firstPoint, const CPoint & secondPoint, const CPoint & thirdPoint, const std::string & fillColor, const std::string & outlineColor)
 {
@@ -13,7 +13,13 @@ CTriangle::CTriangle(const CPoint & firstPoint, const CPoint & secondPoint, cons
 
 std::string CTriangle::ToString() const
 {
-	return std::string("triangle");
+	//Circle<10, 10>, R = 10, S = 314.15927, P = 62, 831853
+	std::array<CPoint,3> points = GetPoints();
+	return std::string("triangle <" + boost::lexical_cast<std::string>(points[0].GetPosition().first) + ", " + boost::lexical_cast<std::string>(points[0].GetPosition().second) + "><" + 
+		boost::lexical_cast<std::string>(points[1].GetPosition().first) + ", " + boost::lexical_cast<std::string>(points[1].GetPosition().second) + "><" +
+		boost::lexical_cast<std::string>(points[2].GetPosition().first) + boost::lexical_cast<std::string>(points[2].GetPosition().second) + "> " + ", S = " + 
+		boost::lexical_cast<std::string>(GetArea()) + ", P = " + boost::lexical_cast<std::string>(GetPerimeter()) + ", " +
+		boost::lexical_cast<std::string>(GetOutlineColor()) + ", " + boost::lexical_cast<std::string>(GetFillColor()));
 }
 
 double CTriangle::GetArea() const

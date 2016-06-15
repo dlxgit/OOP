@@ -1,4 +1,5 @@
 #include "CRectangle.h"
+#include "stdafx.h"
 
 CRectangle::CRectangle(const CPoint & position, const double & width, const double & height, const std::string & fillColor, const std::string & outlineColor)
 {
@@ -11,7 +12,10 @@ CRectangle::CRectangle(const CPoint & position, const double & width, const doub
 
 std::string CRectangle::ToString() const
 {
-	return std::string("rectangle");
+	return std::string("rectangle <" + boost::lexical_cast<std::string>(GetTopLeftPoint().GetPosition().first) + ", " + 
+		std::to_string(GetTopLeftPoint().GetPosition().second) + "> width = " + boost::lexical_cast<std::string>(GetWidth()) +
+		", height = " + boost::lexical_cast<std::string>(GetHeight()) + ", " + ", S = " + boost::lexical_cast<std::string>(GetArea()) + ", P = " +
+		std::to_string(GetPerimeter()) + ", " + boost::lexical_cast<std::string>(GetOutlineColor()) + ", " + GetFillColor());
 }
 
 double CRectangle::GetArea() const

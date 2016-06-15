@@ -1,6 +1,6 @@
 #include "CLineSegment.h"
 #include <math.h>
-
+#include "stdafx.h"
 
 CLineSegment::CLineSegment(const CPoint & first, const CPoint & second, const std::string & color)
 {

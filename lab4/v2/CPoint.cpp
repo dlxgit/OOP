@@ -1,5 +1,5 @@
 #include "CPoint.h"
-
+#include "stdafx.h"
 
 CPoint::CPoint(const double & x, const double & y, const std::string & color)
 {
@@ -17,7 +17,6 @@ double CPoint::GetArea() const
 	return 0;
 }
 
-
 double CPoint::GetPerimeter() const
 {
 	return 0;
@@ -25,5 +24,5 @@ double CPoint::GetPerimeter() const
 
 std::string CPoint::ToString() const
 {
-	return std::string("Point");
+	return std::string("point <" + std::to_string(GetPosition().first) + ", " + std::to_string(GetPosition().second) + GetOutlineColor());
 }
