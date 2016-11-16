@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "CStringList.h"
 
+#include <boost/test/output/compiler_log_formatter.hpp>
+
 
 CStringList::CStringList()
 {
@@ -9,16 +11,26 @@ CStringList::CStringList()
 	m_size = 0;
 }
 
-CStringList::CIterator::CIterator(CStringList::Node * node, bool isReverse)
+CStringList::~CStringList()
 {
-	m_node = node;
-	m_isReverse = isReverse;
+	if (m_head == nullptr)
+	{
+		return;
+	}
+
+	while (m_head.get() != m_tail)
+	{
+		m_tail = m_tail->prev;
+		m_tail->next = nullptr;
+	}
+	m_head = nullptr;
 }
 
-void CStringList::push_back(const std::string & str)
+
+void CStringList::Push_back(const std::string & str)
 {
 	std::unique_ptr<Node> newElement = std::make_unique<Node>(str, m_tail, nullptr);
-	if (!empty())
+	if (!Empty())
 	{
 		m_tail->next = std::move(newElement);
 		m_tail = m_tail->next.get();
@@ -31,9 +43,9 @@ void CStringList::push_back(const std::string & str)
 	++m_size;
 }
 
-void CStringList::push_front(const std::string & str)
+void CStringList::Push_front(const std::string & str)
 {
-	if (!empty())
+	if (!Empty())
 	{
 		std::unique_ptr<Node> newElement = std::make_unique<Node>(str, nullptr, std::move(m_head));
 		m_head = std::move(newElement);
@@ -49,17 +61,17 @@ void CStringList::push_front(const std::string & str)
 	++m_size;
 }
 
-size_t CStringList::size()
+size_t CStringList::Size() const
 {
 	return m_size;
 }
 
-bool CStringList::empty()
+bool CStringList::Empty() const
 {
 	return m_head == nullptr;
 }
 
-void CStringList::clear()
+void CStringList::Clear()
 {
 	while (m_tail)
 	{
@@ -70,34 +82,33 @@ void CStringList::clear()
 	m_size = 0;
 }
 
-CStringList::CIterator CStringList::insert(const CIterator & it, const std::string & value)
+CStringList::CIterator CStringList::Insert(const CStringList::CIterator & it, const std::string & value)
 {
 
-	if (empty() || it == begin())
+	if (Empty() || it == begin())
 	{
-		push_front(value);
+		Push_front(value);
 		return begin();
 	}
 
 
-	Node * prevNode = it->prev;
-	std::unique_ptr<Node> newNode = std::make_unique<Node>(value, it->prev, std::move(it->prev->next));
+	Node * prevNode = it.m_node->prev;
+	std::unique_ptr<Node> newNode = std::make_unique<Node>(value, it.m_node->prev, std::move(it.m_node->prev->next));
 	prevNode->next = std::move(newNode);
 	++m_size;
 
-	return CIterator(it->prev->next.get());
+	return CStringList::CIterator(it.m_node->prev->next.get());
 }
 
-CStringList::CIterator CStringList::erase(const CIterator & it)
+CStringList::CIterator CStringList::Erase(const CStringList::CIterator & it)
 {
 	if (it == nullptr)
 	{
 		throw std::out_of_range("Iterator is nullptr");
 	}
-
 	if (m_size == 1)
 	{
-		clear();
+		Clear();
 		return begin();
 	}
 	if (it == m_head.get())
@@ -112,14 +123,14 @@ CStringList::CIterator CStringList::erase(const CIterator & it)
 	}
 	else
 	{
-		Node * prevNode = it->prev;
-		std::unique_ptr<Node> nextNode = std::move(it->next);
+		Node * prevNode = it.m_node->prev;
+		std::unique_ptr<Node> nextNode = std::move(it.m_node->next);
 		prevNode->next = std::move(nextNode);
 		prevNode->next->prev = prevNode;
 
-		if (it->prev == nullptr)
+		if (it.m_node->prev == nullptr)
 		{
-			m_head = std::move(it->next);
+			m_head = std::move(it.m_node->next);
 			m_head->prev = nullptr;
 		}
 	}
@@ -127,50 +138,59 @@ CStringList::CIterator CStringList::erase(const CIterator & it)
 	return it;
 }
 
-CStringList::CIterator CStringList::begin()
+CStringList::CIterator CStringList::begin() const
 {
-	return CIterator(m_head.get(), false);
+	return CStringList::CIterator(m_head.get(), false);
 }
 
-CStringList::CIterator CStringList::end()
+CStringList::CIterator CStringList::end() const
 {
-	return CIterator(m_tail);
+	return CStringList::CIterator(m_tail->next.get());
 }
 
-CStringList::CIterator CStringList::cbegin() const
+const CStringList::CConstIterator CStringList::Cbegin() const
 {
-	return CIterator(m_head.get());
+	return CStringList::CConstIterator(m_head.get());
 }
 
-CStringList::CIterator CStringList::cend() const
+const CStringList::CConstIterator CStringList::Cend() const
 {
-	return CIterator(nullptr);
+	return CStringList::CConstIterator(nullptr);
 }
 
-CStringList::CIterator CStringList::rbegin()
+CStringList::CIterator CStringList::Rbegin() const
 {
-	return CIterator(m_tail, true);
+	return CStringList::CIterator(m_tail, true);
 }
 
-CStringList::CIterator CStringList::rend()
+CStringList::CIterator CStringList::Rend() const
 {
-	return CIterator(m_head->prev, true);
+	return CStringList::CIterator(m_head->prev, true);
 }
 
-std::string CStringList::CIterator::operator * () const
+const CStringList::CConstIterator CStringList::Rcbegin() const
 {
-	return m_node->data;
+	return CStringList::CConstIterator(m_tail, true);
+
 }
 
-bool CStringList::CIterator::operator!=(CIterator const & other) const
+const CStringList::CConstIterator CStringList::Rcend() const
 {
-	return m_node != other.m_node;
+	return CStringList::CConstIterator(m_head->prev, true);
 }
 
-bool CStringList::CIterator::operator==(CIterator const & other) const
+CStringList::CIterator::CIterator(CStringList::Node * node, bool isReverse)
 {
-	return m_node == other.m_node;
+	m_node = node;
+	m_isReverse = isReverse;
 }
+
+
+std::string & CStringList::CIterator::operator * () const
+{
+	return (*m_node).data;
+}
+
 
 CStringList::CIterator & CStringList::CIterator::operator++()
 {
@@ -180,9 +200,24 @@ CStringList::CIterator & CStringList::CIterator::operator++()
 
 CStringList::CIterator & CStringList::CIterator::operator--()
 {
-	m_node = m_isReverse ? m_node->next.get() :m_node->prev;
+	m_node = m_isReverse ? m_node->next.get() : m_node->prev;
 	return *this;
 }
+
+CStringList::CIterator operator++(CStringList::CIterator& i, int)
+{
+	CStringList::CIterator oldValue = i;
+	++i;
+	return oldValue;
+}
+
+CStringList::CIterator operator--(CStringList::CIterator& i, int)
+{
+	CStringList::CIterator oldValue = i;
+	--i;
+	return oldValue;
+}
+
 
 CStringList::CIterator CStringList::CIterator::operator+(size_t index)
 {
@@ -196,17 +231,55 @@ CStringList::CIterator CStringList::CIterator::operator+(size_t index)
 		{
 			m_node = m_node->next.get();
 		}
-		
+
 		if (m_node == nullptr)
 		{
 			throw std::out_of_range("Iterator incrementing is impossible");
 		}
 		--index;
 	}
-	return CIterator(m_node);
+	return CStringList::CIterator(m_node);
 }
 
-CStringList::Node * CStringList::CIterator::operator->()const
+std::string * CStringList::CIterator::operator->() const
 {
-	return m_node;
+	return &m_node->data;
+}
+
+bool CStringList::CIterator::operator!=(CStringList::CIterator const & other) const
+{
+	return m_node != other.m_node;
+}
+
+bool CStringList::CIterator::operator==(CStringList::CIterator const & other) const
+{
+	return m_node == other.m_node;
+}
+
+
+CStringList::CConstIterator::CConstIterator(CStringList::Node * node, bool isReverse)
+{
+	m_node = node;
+	m_isReverse = isReverse;
+}
+
+
+const std::string & CStringList::CConstIterator::operator * () const
+{
+	return m_node->data;
+}
+
+bool CStringList::CConstIterator::operator!=(CStringList::CConstIterator const & other) const
+{
+	return m_node != other.m_node;
+}
+
+bool CStringList::CConstIterator::operator==(CStringList::CConstIterator const & other) const
+{
+	return m_node == other.m_node;
+}
+
+const std::string * CStringList::CConstIterator::operator->()const
+{
+	return &m_node->data;
 }
