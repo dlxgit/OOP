@@ -1,5 +1,6 @@
-#include "CPoint.h"
 #include "stdafx.h"
+#include "CPoint.h"
+
 
 CPoint::CPoint(const double & x, const double & y, const std::string & color)
 {
@@ -24,5 +25,7 @@ double CPoint::GetPerimeter() const
 
 std::string CPoint::ToString() const
 {
-	return std::string("point <" + std::to_string(GetPosition().first) + ", " + std::to_string(GetPosition().second) + GetOutlineColor());
+	std::stringstream ss;
+	ss << std::fixed << std::setprecision(2) << "point <" << m_position.first << ", " << m_position.second << ">, " << GetOutlineColor();
+	return ss.str();
 }

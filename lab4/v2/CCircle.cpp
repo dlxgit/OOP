@@ -1,5 +1,6 @@
-#include "CCircle.h"
 #include "stdafx.h"
+#include "CCircle.h"
+
 
 CCircle::CCircle(CPoint & point, const double & radius, const std::string & outlineColor, const std::string & fillColor)
 {
@@ -12,10 +13,9 @@ CCircle::CCircle(CPoint & point, const double & radius, const std::string & outl
 
 std::string CCircle::ToString() const
 {
-	//Circle<10, 10>, R = 10, S = 314.15927, P = 62, 831853
-	return std::string("circle" + boost::lexical_cast<std::string>(GetCenter().GetPosition().first) + boost::lexical_cast<std::string>(GetCenter().GetPosition().second)
-		+ " R = " + boost::lexical_cast<std::string>(GetRadius()) + ", S = " + boost::lexical_cast<std::string>(GetArea()) + ", P = " +
-		boost::lexical_cast<std::string>(GetPerimeter()) + ", " + boost::lexical_cast<std::string>(GetOutlineColor()) + ", " + GetFillColor());
+	std::stringstream ss;
+	ss << std::fixed << std::setprecision(2) << "circle <" << GetCenter().GetPosition().first << ", " << GetCenter().GetPosition().second << ">, R = " << GetRadius() << ", S = " << GetArea() << ", P = " << GetPerimeter() << ", " << GetOutlineColor() << ", " << GetFillColor();
+	return ss.str();
 }
 
 double CCircle::GetArea() const

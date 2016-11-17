@@ -11,5 +11,4 @@ public:
 	std::string ToString() const override;
 private:
 	std::pair<double, double> m_position;
-	std::string m_outlineColor;
 };

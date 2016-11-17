@@ -5,7 +5,7 @@
 class CRectangle : public CSolidShape
 {
 public:
-	CRectangle(const CPoint & position, const double & width, const double & height, const std::string & fillColor, const std::string & outlineColor);
+	CRectangle(const CPoint & position, const double & width, const double & height, const std::string & outlineColor, const std::string & fillColor);
 	CPoint GetTopLeftPoint() const;
 	double GetWidth() const;
 	double GetHeight() const;

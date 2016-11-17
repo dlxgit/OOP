@@ -18,5 +18,4 @@ public:
 private:
 	CPoint m_firstPoint;
 	CPoint m_secondPoint;
-	std::string m_outlineColor;
 };

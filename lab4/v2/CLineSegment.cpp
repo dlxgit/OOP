@@ -1,6 +1,7 @@
+#include "stdafx.h"
 #include "CLineSegment.h"
 #include <math.h>
-#include "stdafx.h"
+
 
 CLineSegment::CLineSegment(const CPoint & first, const CPoint & second, const std::string & color)
 {
@@ -33,5 +34,7 @@ double CLineSegment::GetPerimeter() const
 
 std::string CLineSegment::ToString() const
 {
-	return std::string("LineSegment");
+	std::stringstream ss;
+	ss << std::fixed << std::setprecision(2) << "line <" << m_firstPoint.GetPosition().first << ", " << m_firstPoint.GetPosition().second << ">, <" << m_secondPoint.GetPosition().first << ", " << m_secondPoint.GetPosition().second << ">, " << GetOutlineColor();
+	return ss.str();
 }

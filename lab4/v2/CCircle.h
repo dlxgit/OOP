@@ -18,6 +18,4 @@ public:
 private:
 	CPoint m_center;
 	double m_radius;
-	std::string m_outlineColor;
-	std::string m_fillColor;
 };
