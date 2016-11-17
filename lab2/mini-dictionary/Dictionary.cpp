@@ -41,15 +41,14 @@ Dictionary ReadDataFromFile(const std::string & inputFileName)
 
 void SaveDictionaryInFile(const Dictionary & dictionary)
 {
-	std::ofstream outputFile("Program_data.txt");
+	std::ofstream outputFile("dictionary.txt");
 	for (std::pair<std::string, std::string> element : dictionary)
 	{
-		std::cout << element.first;
 		outputFile << element.first << '/' << element.second << std::endl;
 	}
 	if (outputFile.flush())
 	{
-		std::cout << "Changes are saved in file Program_data.txt" << std::endl;
+		std::cout << "Changes are saved in dictionary.txt" << std::endl;
 	}
 	else
 	{
@@ -93,6 +92,7 @@ void ProcessInputData(Dictionary & dictionary)
 {
 	bool isDictionaryModified = false;
 	std::string searchingWord;
+	std::cout << "Input searching word, or <...> to exit." << std::endl;
 	std::getline(std::cin, searchingWord);
 	while (searchingWord != std::string("..."))
 	{
@@ -108,7 +108,7 @@ void ProcessInputData(Dictionary & dictionary)
 			if (!translation.empty()) //insert new Element
 			{
 				isDictionaryModified = true;
-				std::cout << "Word " << searchingWord << " saved as " << translation << std::endl;
+				std::cout << "Word <" << searchingWord << "> has been saved as <" << translation << ">" << std::endl;
 				AddElement(dictionary, { searchingWord, translation });
 			}
 		}

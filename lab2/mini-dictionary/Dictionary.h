@@ -16,7 +16,7 @@ typedef std::multimap<std::string, std::string> Dictionary;
 
 std::vector<std::string> PartLineBySymbol(const std::string & line, const std::string & delimeter);
 
-Dictionary ReadDataFromFile(const std::string & inputFileName = "Program_data.txt");
+Dictionary ReadDataFromFile(const std::string & inputFileName = "dictionary.txt");
 
 void AskUserToSaveChanges(const Dictionary & dictionary);
 
