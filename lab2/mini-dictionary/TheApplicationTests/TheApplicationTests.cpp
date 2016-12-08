@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "../Dictionary.h"
 #include <fstream>
 
@@ -20,7 +20,7 @@ BOOST_FIXTURE_TEST_SUITE(Empty_dictionary, empty_dict_)
 	BOOST_AUTO_TEST_CASE(can_be_read_from_correct_file)
 	{
 		std::ofstream outputFile("dictionary.txt");
-		std::string line = "cat/кошка";
+		std::string line = "cat/РєРѕС€РєР°";
 		outputFile << line;
 		outputFile.flush();
 
@@ -28,14 +28,14 @@ BOOST_FIXTURE_TEST_SUITE(Empty_dictionary, empty_dict_)
 		BOOST_CHECK_EQUAL(dictionary.size(), 1);
 		BOOST_CHECK(HasWord(dictionary, "cat"));
 		std::string translation = GetTranslation(dictionary, "cat");
-		BOOST_CHECK_EQUAL(translation, "кошка ");
+		BOOST_CHECK_EQUAL(translation, "РєРѕС€РєР° ");
 	}
 
 	BOOST_AUTO_TEST_CASE(can_add_element_in_dict)
 	{
-		AddElement(dict, DictElement("car", "машина"));
+		AddElement(dict, DictElement("car", "РјР°С€РёРЅР°"));
 		BOOST_CHECK(HasWord(dict, "car"));
-		BOOST_CHECK(!HasWord(dict, "машина"));
+		BOOST_CHECK(!HasWord(dict, "РјР°С€РёРЅР°"));
 	}
 
 	BOOST_AUTO_TEST_CASE(cant_find_any_element)
@@ -48,17 +48,17 @@ BOOST_AUTO_TEST_SUITE_END();
 
 struct filled_dictionary_
 {
-	Dictionary dict = { {"cat", "кошка"}, {"dog", "собака"}, {"bird", "птица"} };
+	Dictionary dict = { {"cat", "РєРѕС€РєР°"}, {"dog", "СЃРѕР±Р°РєР°"}, {"bird", "РїС‚РёС†Р°"} };
 };
 
 BOOST_FIXTURE_TEST_SUITE(Filled_Dictionary, filled_dictionary_)
 
 	BOOST_AUTO_TEST_CASE(can_save_dictionary)
 	{
-		AddElement(dict, { "monkey", "обезьяна" });
+		AddElement(dict, { "monkey", "РѕР±РµР·СЊСЏРЅР°" });
 		SaveDictionaryInFile(dict);
 		Dictionary newDict = ReadDataFromFile();
-		Dictionary expected = { { "cat", "кошка" },{ "dog", "собака" },{ "bird", "птица" },{ "monkey", "обезьяна" } };
+		Dictionary expected = { { "cat", "РєРѕС€РєР°" },{ "dog", "СЃРѕР±Р°РєР°" },{ "bird", "РїС‚РёС†Р°" },{ "monkey", "РѕР±РµР·СЊСЏРЅР°" } };
 		BOOST_CHECK(newDict == expected);
 	}
 
@@ -70,23 +70,23 @@ BOOST_FIXTURE_TEST_SUITE(Filled_Dictionary, filled_dictionary_)
 
 	BOOST_AUTO_TEST_CASE(can_get_translation_of_)
 	{
-		AddElement(dict, { "cat", "кот" });
+		AddElement(dict, { "cat", "РєРѕС‚" });
 
-		BOOST_CHECK(GetTranslation(dict, "cat") == std::string("кошка кот "));
+		BOOST_CHECK(GetTranslation(dict, "cat") == std::string("РєРѕС€РєР° РєРѕС‚ "));
 	}
 
 BOOST_AUTO_TEST_SUITE_END();
 
 struct filled_dictionary_with_two_translations_of_one_word_
 {
-	Dictionary dict = { { "bird", "птица" } , {"bird", "ptica"} };
+	Dictionary dict = { { "bird", "РїС‚РёС†Р°" } , {"bird", "ptica"} };
 };
 
 BOOST_FIXTURE_TEST_SUITE(filled_dictionary_with_two_translations_of_one_word, filled_dictionary_with_two_translations_of_one_word_)
 
 	BOOST_AUTO_TEST_CASE(gets_all_translations_when_need_to_translate)
 	{
-		BOOST_CHECK_EQUAL(GetTranslation(dict, "bird"), "птица ptica ");
+		BOOST_CHECK_EQUAL(GetTranslation(dict, "bird"), "РїС‚РёС†Р° ptica ");
 	}
 
 BOOST_AUTO_TEST_SUITE_END()
