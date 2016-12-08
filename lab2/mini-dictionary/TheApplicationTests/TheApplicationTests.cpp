@@ -9,6 +9,7 @@ struct empty_dict_
 	Dictionary dict = {};
 };
 
+
 BOOST_FIXTURE_TEST_SUITE(Empty_dictionary, empty_dict_)
 
 	BOOST_AUTO_TEST_CASE(is_empty_after_reading_from_incorrect_file)
