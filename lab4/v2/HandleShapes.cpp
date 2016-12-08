@@ -8,9 +8,9 @@ sf::Color ConvertHexToRgb(const std::string & hex)
 	{
 		return sf::Color::Black;
 	}
+
 	hexCode.erase(0, 1);
 	int number = std::stoi(hexCode, 0, 16);
-
 	return sf::Color(number / 0x10000, (number / 0x100) % 0x100, number % 0x100);
 }
 
@@ -148,14 +148,15 @@ void AddTriangle(const std::vector<std::string> & inputParts, std::vector<std::s
 
 void AddRectangle(const std::vector<std::string> & inputParts, std::vector<std::shared_ptr<CShape>> & figures, std::vector<std::shared_ptr<sf::Shape>> & shapes)
 {
+	double x = std::stod(inputParts[1]);
+	double y = std::stod(inputParts[2]);
 	double width = std::stod(inputParts[3]);
 	double height = std::stod(inputParts[4]);
+
 	if (width <= 0 || height <= 0)
 	{
 		throw std::invalid_argument("Error: width and height of rectangle must be positive");
 	}
-	double x = std::stod(inputParts[1]);
-	double y = std::stod(inputParts[2]);
 
 	std::string outlineColor = inputParts[5];
 	std::string fillColor = inputParts[6];

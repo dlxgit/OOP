@@ -7,7 +7,7 @@
 class CCircle : public CSolidShape
 {
 public:
-	CCircle(CPoint & point, const double & radius, const std::string & outlineColor, const std::string & fillColor);
+	CCircle(CPoint & point, double radius, const std::string & outlineColor, const std::string & fillColor);
 	CPoint GetCenter() const;
 	double GetRadius() const;
 

@@ -2,7 +2,7 @@
 #include "CCircle.h"
 
 
-CCircle::CCircle(CPoint & point, const double & radius, const std::string & outlineColor, const std::string & fillColor)
+CCircle::CCircle(CPoint & point, const double radius, const std::string & outlineColor, const std::string & fillColor)
 {
 	m_center = point;
 	m_radius = radius;
@@ -14,7 +14,14 @@ CCircle::CCircle(CPoint & point, const double & radius, const std::string & outl
 std::string CCircle::ToString() const
 {
 	std::stringstream ss;
-	ss << std::fixed << std::setprecision(2) << "circle <" << GetCenter().GetPosition().first << ", " << GetCenter().GetPosition().second << ">, R = " << GetRadius() << ", S = " << GetArea() << ", P = " << GetPerimeter() << ", " << GetOutlineColor() << ", " << GetFillColor();
+	ss << std::fixed << std::setprecision(2) << "circle <" << 
+		m_center.GetPosition().first << ", " << 
+		m_center.GetPosition().second << ">, R = " << 
+		GetRadius() << ", S = " << 
+		GetArea() << ", P = " << 
+		GetPerimeter() << ", " << 
+		m_outlineColor << ", " << 
+		m_fillColor;
 	return ss.str();
 }
 

@@ -2,7 +2,7 @@
 #include "CPoint.h"
 
 
-CPoint::CPoint(const double & x, const double & y, const std::string & color)
+CPoint::CPoint(double x, double y, const std::string & color)
 {
 	m_position = std::pair<double, double>(x, y);
 	m_outlineColor = color;
@@ -26,6 +26,9 @@ double CPoint::GetPerimeter() const
 std::string CPoint::ToString() const
 {
 	std::stringstream ss;
-	ss << std::fixed << std::setprecision(2) << "point <" << m_position.first << ", " << m_position.second << ">, " << GetOutlineColor();
+	ss << std::fixed << std::setprecision(2) << "point <" << 
+		m_position.first << ", " << 
+		m_position.second << ">, " << 
+		m_outlineColor;
 	return ss.str();
 }

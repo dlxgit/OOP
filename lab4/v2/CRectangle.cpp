@@ -2,7 +2,7 @@
 #include "CRectangle.h"
 
 
-CRectangle::CRectangle(const CPoint & position, const double & width, const double & height, const std::string & outlineColor, const std::string & fillColor)
+CRectangle::CRectangle(const CPoint & position, double width, double height, const std::string & outlineColor, const std::string & fillColor)
 {
 	m_position = position;
 	m_width = width;
@@ -14,22 +14,29 @@ CRectangle::CRectangle(const CPoint & position, const double & width, const doub
 std::string CRectangle::ToString() const
 {
 	std::stringstream ss;
-	ss << std::fixed << std::setprecision(2) << "rectangle <" << m_position.GetPosition().first << ", " << m_position.GetPosition().second << "> " << "width = " << m_width << ", height = " << m_height << ", S = " << GetArea() << ", P = " << GetPerimeter() << ", " << GetOutlineColor() << ", " << GetFillColor();
+	ss << std::fixed << std::setprecision(2) << "rectangle <" << 
+		m_position.GetPosition().first << ", " << 
+		m_position.GetPosition().second << "> " << "width = " << 
+		m_width << ", height = " << 
+		m_height << ", S = " << 
+		GetArea() << ", P = " << 
+		GetPerimeter() << ", " << 
+		m_outlineColor << ", " << 
+		m_fillColor;
 	return ss.str();
 }
 
 double CRectangle::GetArea() const
 {
-	return GetWidth() * GetHeight();
+	return m_width * m_height;
 }
 
 double CRectangle::GetPerimeter() const
 {
-	return (GetWidth() + GetHeight()) * 2;
+	return (m_width + m_height) * 2;
 }
 
-
-CPoint CRectangle::GetTopLeftPoint() const
+CPoint CRectangle::GetPosition() const
 {
 	return m_position;
 }

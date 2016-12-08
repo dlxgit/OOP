@@ -35,6 +35,11 @@ double CLineSegment::GetPerimeter() const
 std::string CLineSegment::ToString() const
 {
 	std::stringstream ss;
-	ss << std::fixed << std::setprecision(2) << "line <" << m_firstPoint.GetPosition().first << ", " << m_firstPoint.GetPosition().second << ">, <" << m_secondPoint.GetPosition().first << ", " << m_secondPoint.GetPosition().second << ">, " << GetOutlineColor();
+	ss << std::fixed << std::setprecision(2) << "line <" << 
+		m_firstPoint.GetPosition().first << ", " << 
+		m_firstPoint.GetPosition().second << ">, <" << 
+		m_secondPoint.GetPosition().first << ", " << 
+		m_secondPoint.GetPosition().second << ">, " << 
+		m_outlineColor;
 	return ss.str();
 }
