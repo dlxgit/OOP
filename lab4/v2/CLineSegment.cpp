@@ -12,13 +12,13 @@ CLineSegment::CLineSegment(const CPoint & first, const CPoint & second, const st
 
 std::pair<CPoint, CPoint> CLineSegment::GetPoints() const
 {
-	return std::pair<CPoint, CPoint>(m_firstPoint, m_secondPoint);
+	return std::make_pair(m_firstPoint, m_secondPoint);
 }
 
 double CLineSegment::GetLength() const
 {
-	std::pair<double, double> firstPointPos = GetPoints().first.GetPosition();
-	std::pair<double, double> secondPointPos = GetPoints().second.GetPosition();
+	auto firstPointPos = GetPoints().first.GetPosition();
+	auto secondPointPos = GetPoints().second.GetPosition();
 	return sqrt(pow(firstPointPos.first - secondPointPos.first, 2) + pow(firstPointPos.second - secondPointPos.second, 2));
 }
 
@@ -34,8 +34,8 @@ double CLineSegment::GetPerimeter() const
 
 std::string CLineSegment::ToString() const
 {
-	std::pair<double, double> point1 = m_firstPoint.GetPosition();
-	std::pair<double, double> point2 = m_secondPoint.GetPosition();
+	auto point1 = m_firstPoint.GetPosition();
+	auto point2 = m_secondPoint.GetPosition();
 
 	std::stringstream ss;
 	ss << std::fixed << std::setprecision(2) << 
