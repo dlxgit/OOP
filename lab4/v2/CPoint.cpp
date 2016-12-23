@@ -4,7 +4,7 @@
 
 CPoint::CPoint(double x, double y, const std::string & color)
 {
-	m_position = std::pair<double, double>(x, y);
+	m_position = std::make_pair(x, y);
 	m_outlineColor = color;
 }
 

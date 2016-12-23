@@ -14,9 +14,10 @@ CRectangle::CRectangle(const CPoint & position, double width, double height, con
 std::string CRectangle::ToString() const
 {
 	std::stringstream ss;
+	std::pair<double, double> position = m_position.GetPosition();
 	ss << std::fixed << std::setprecision(2) << "rectangle <" << 
-		m_position.GetPosition().first << ", " << 
-		m_position.GetPosition().second << "> " << "width = " << 
+		position.first << ", " << 
+		position.second << "> " << "width = " << 
 		m_width << ", height = " << 
 		m_height << ", S = " << 
 		GetArea() << ", P = " << 

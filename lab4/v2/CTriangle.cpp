@@ -12,14 +12,19 @@ CTriangle::CTriangle(const CPoint & firstPoint, const CPoint & secondPoint, cons
 
 std::string CTriangle::ToString() const
 {
+	std::pair<double, double> point1 = m_firstPoint.GetPosition();
+	std::pair<double, double> point2 = m_secondPoint.GetPosition();
+	std::pair<double, double> point3 = m_thirdPoint.GetPosition();
+
 	std::stringstream ss;
-	ss << std::fixed << std::setprecision(2) << "triangle <" << 
-		m_firstPoint.GetPosition().first << ", " << 
-		m_firstPoint.GetPosition().second << ">, " << "<" << 
-		m_secondPoint.GetPosition().first << ", " << 
-		m_secondPoint.GetPosition().second << ">, <" << 
-		m_thirdPoint.GetPosition().first << ", " << 
-		m_thirdPoint.GetPosition().second << ">, S = " << 
+	ss << std::fixed << std::setprecision(2) << 
+		"triangle <" << 
+		point1.first << ", " <<
+		point1.second << ">, " << "<" <<
+		point2.first << ", " <<
+		point2.second << ">, <" <<
+		point3.first << ", " <<
+		point3.second << ">, S = " <<
 		GetArea() << ", P = " << 
 		GetPerimeter() << ", " << 
 		m_outlineColor << ", " << 
