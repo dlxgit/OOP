@@ -6,7 +6,8 @@ template <typename T>
 class CMyList
 {
 public:
-	struct Node {
+	struct Node 
+	{
 		Node(const T & data, Node * prev, std::unique_ptr<Node> && next)
 			: data(data), prev(prev), next(std::move(next))
 		{
@@ -22,7 +23,13 @@ public:
 		m_tail = nullptr;
 		m_size = 0;
 	}
-	
+
+	CMyList(const CMyList & other) : m_head(other.m_head.get())
+	{
+  		this->m_tail = other.m_tail;
+  		this->m_size = other.m_size;
+	}
+
 	~CMyList()
 	{
 		if (m_head == nullptr)
@@ -37,7 +44,25 @@ public:
 		}
 		m_head = nullptr;
 	}
+	
+	CMyList & operator =(const CMyList & other)
+	{
+		if (std::addressof(other) != this)
+		{
+			CMyList tmpCopy(other);
+			std::swap(m_head, tmpCopy.m_head);
+			std::swap(m_size, tmpCopy.m_size);
+			std::swap(m_tail, tmpCopy.m_tail);
+		}
+		return *this;
+	}
+
+private:
+	size_t m_size;
+	std::unique_ptr<Node> m_head = nullptr;
+	Node * m_tail = nullptr;
 	 
+public:
 	class CIterator : std::iterator<std::bidirectional_iterator_tag, T>
 	{
 		friend class CMyList;
@@ -77,11 +102,11 @@ public:
 			return *this;
 		}
 
-		CIterator operator+(size_t index)
+		CIterator operator+(int index)
 		{
-			while (index > 0)
+			while (abs(index) > 0)
 			{
-				if (m_isReverse)
+				if (m_isReverse || index < 0)
 				{
 					m_node = m_node->prev;
 				}
@@ -159,7 +184,7 @@ public:
 		bool m_isReverse = false;
 	};
 	
-	void Push_back(const T & elem)
+	void PushBack(const T & elem)
 	{
 		std::unique_ptr<Node> newElement = std::make_unique<Node>(elem, m_tail, nullptr);
 		if (!Empty())
@@ -175,7 +200,7 @@ public:
 		++m_size;
 	}
 
-	void Push_front(const T & elem)
+	void PushFront(const T & elem)
 	{
 		if (!Empty())
 		{
@@ -219,10 +244,9 @@ public:
 
 		if (Empty() || it == begin())
 		{
-			Push_front(value);
+			PushFront(value);
 			return begin();
 		}
-
 
 		Node * prevNode = it.m_node->prev;
 		std::unique_ptr<Node> newNode = std::make_unique<Node>(value, it.m_node->prev, std::move(it.m_node->prev->next));
@@ -259,12 +283,6 @@ public:
 			std::unique_ptr<Node> nextNode = std::move(it.m_node->next);
 			prevNode->next = std::move(nextNode);
 			prevNode->next->prev = prevNode;
-
-			if (it.m_node->prev == nullptr)
-			{
-				m_head = std::move(it.m_node->next);
-				m_head->prev = nullptr;
-			}
 		}
 		--m_size;
 		return it;
@@ -300,19 +318,13 @@ public:
 		return CIterator(m_head->prev, true);
 	}
 
-	const CConstIterator Rcbegin() const
+	const CConstIterator Crbegin() const
 	{
 		return CConstIterator(m_tail, true);
-
 	}
 
-	const CConstIterator Rcend() const
+	const CConstIterator Crend() const
 	{
 		return CConstIterator(m_head->prev, true);
 	}
-
-private:
-	size_t m_size;
-	std::unique_ptr<Node> m_head = nullptr;
-	Node * m_tail = nullptr;
 };

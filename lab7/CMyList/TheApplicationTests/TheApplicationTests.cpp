@@ -6,12 +6,16 @@
 
 struct empty_string_list_
 {
+	empty_string_list_() 
+	{
+		list = CMyList<std::string>();
+	}
 	CMyList<std::string> list;
 };
 
 
 BOOST_FIXTURE_TEST_SUITE(empty_string_list, empty_string_list_)
-
+	
 	BOOST_AUTO_TEST_CASE(is_empty_after_creating)
 	{
 		BOOST_CHECK_EQUAL(list.Size(), 0);
@@ -22,18 +26,18 @@ BOOST_FIXTURE_TEST_SUITE(empty_string_list, empty_string_list_)
 
 		BOOST_AUTO_TEST_CASE(push_back)
 		{
-			list.Push_back("first_elem");
+			list.PushBack("first_elem");
 			BOOST_CHECK_EQUAL(list.Size(), 1);
-			list.Push_back("second_elem");
+			list.PushBack("second_elem");
 			BOOST_CHECK_EQUAL(list.Size(), 2);
 			BOOST_CHECK(!list.Empty());
 		}
 
 		BOOST_AUTO_TEST_CASE(push_front)
 		{
-			list.Push_front("second");
+			list.PushFront("second");
 			BOOST_CHECK_EQUAL(list.Size(), 1);
-			list.Push_front("first");
+			list.PushFront("first");
 			BOOST_CHECK_EQUAL(list.Size(), 2);
 			BOOST_CHECK(!list.Empty());
 		}
@@ -53,7 +57,7 @@ BOOST_FIXTURE_TEST_SUITE(empty_string_list, empty_string_list_)
 
 	BOOST_AUTO_TEST_SUITE(is_not_possible_to_erase_element)
 	
-		BOOST_AUTO_TEST_CASE(by_nullptr)
+		BOOST_AUTO_TEST_CASE(by_begin_iterator)
 		{
 			BOOST_REQUIRE_THROW(list.Erase(list.begin()), std::out_of_range);
 		}
@@ -63,7 +67,7 @@ BOOST_FIXTURE_TEST_SUITE(empty_string_list, empty_string_list_)
 	
 	BOOST_AUTO_TEST_CASE(allows_changing_item_value_using_iterator)
 	{
-		list.Push_back("hello");
+		list.PushBack("hello");
 		BOOST_CHECK_EQUAL(*list.begin(), "hello");
 		*list.begin() = "goodbye";
 		BOOST_CHECK_EQUAL(*list.begin(), "goodbye"); // проверка не пройдет
@@ -74,13 +78,15 @@ BOOST_AUTO_TEST_SUITE_END()
 
 struct filled_string_list_ : public empty_string_list_
 {
+	std::vector<std::string> values = { "1", "2", "3" };
 	filled_string_list_()
 	{
-		list.Push_back("1");
-		list.Push_back("2");
-		list.Push_back("3");
+		for (auto el : values)
+		{
+			list.PushBack(el);
+		}
 	}
-	std::vector<std::string> values = { "1", "2", "3" };
+
 };
 
 
@@ -111,9 +117,8 @@ BOOST_FIXTURE_TEST_SUITE(filled_string_list, filled_string_list_)
 	BOOST_AUTO_TEST_SUITE_END()
 
 
-	BOOST_AUTO_TEST_SUITE(can_change_elements_from)
 
-		BOOST_AUTO_TEST_CASE(range_based_for)
+		BOOST_AUTO_TEST_CASE(can_loop_through_range_based_for)
 		{
  			size_t index = 0;
  			for (auto str : list)
@@ -123,14 +128,12 @@ BOOST_FIXTURE_TEST_SUITE(filled_string_list, filled_string_list_)
 			}
 		}
 
-		BOOST_AUTO_TEST_CASE(iterator)
+		BOOST_AUTO_TEST_CASE(can_change_elements_by_using_iterator)
 		{
 			std::string newValue = "newValue";
 			*list.begin() = std::string("newValue");
 			BOOST_CHECK_EQUAL(*list.begin(), newValue);
 		}
-
-	BOOST_AUTO_TEST_SUITE_END()
 
 
 	BOOST_AUTO_TEST_CASE(should_not_cause_stack_oveflow_on_destruction)
@@ -139,7 +142,7 @@ BOOST_FIXTURE_TEST_SUITE(filled_string_list, filled_string_list_)
 			CMyList<std::string> lst1;
 			for (int i = 0; i < 100000; ++i)
 			{
-				lst1.Push_back("123");
+				lst1.PushBack("123");
 			}
 			std::cout << "(list is filled, ";
 		}
@@ -199,18 +202,27 @@ BOOST_FIXTURE_TEST_SUITE(filled_string_list, filled_string_list_)
 	BOOST_AUTO_TEST_SUITE_END()
 
 
-	BOOST_AUTO_TEST_CASE(can_erase_element_at_iterator_pos)
-	{
-		CMyList<std::string>::CIterator it = ++list.begin();
-		list.Erase(it);
-		BOOST_CHECK_EQUAL(*++list.begin(), "3");
-
-		list.Erase(list.begin());
-		BOOST_CHECK_EQUAL(*list.begin(), "3");
-
-		list.Erase(list.begin());
-		BOOST_CHECK(list.Empty());
-	}
+	BOOST_AUTO_TEST_SUITE(can_erase_element_at_iterator_pos)
+		BOOST_AUTO_TEST_CASE(middle)
+		{
+			CMyList<std::string>::CIterator it = ++list.begin();
+			list.Erase(it);
+			BOOST_CHECK_EQUAL(*list.begin(), "1");
+			BOOST_CHECK_EQUAL(*++list.begin(), "3");
+		}
+		BOOST_AUTO_TEST_CASE(head)
+		{
+			CMyList<std::string>::CIterator it = list.begin();
+			list.Erase(it);
+			BOOST_CHECK_EQUAL(*list.begin(), "2");
+		}
+		BOOST_AUTO_TEST_CASE(tail)
+		{
+			CMyList<std::string>::CIterator it = list.begin() + (list.Size() - 1);
+			list.Erase(it);
+			BOOST_CHECK_EQUAL(*(list.begin() + (list.Size() - 1)), "2");
+		}
+	BOOST_AUTO_TEST_SUITE_END()
 
 	BOOST_AUTO_TEST_SUITE(is_empty_after)
 
@@ -237,7 +249,9 @@ BOOST_FIXTURE_TEST_SUITE(filled_string_list, filled_string_list_)
 		BOOST_AUTO_TEST_CASE(middle)
 		{
 			auto it = ++list.begin();
+			size_t size = list.Size();
 			list.Insert(it, "element next to head");
+			BOOST_CHECK_EQUAL(list.Size(), size + 1);
 			BOOST_CHECK_EQUAL(*(list.begin() + 1), "element next to head");
 			BOOST_CHECK_EQUAL(*(++list.begin()), "element next to head");
 			BOOST_CHECK_EQUAL(*(list.begin()), "1");
@@ -248,14 +262,18 @@ BOOST_FIXTURE_TEST_SUITE(filled_string_list, filled_string_list_)
 
 		BOOST_AUTO_TEST_CASE(beginning)
 		{
+			size_t size = list.Size();
 			list.Insert(list.begin(), "0");
+			BOOST_CHECK_EQUAL(list.Size(), size + 1);
 			BOOST_CHECK_EQUAL(*list.begin(), "0");
 			BOOST_CHECK_EQUAL(*(list.begin() + 1), "1");
 		}
 
 		BOOST_AUTO_TEST_CASE(last_iterator_pos)
 		{
+			size_t size = list.Size();
 			list.Insert(list.begin() + (list.Size() - 1), "asd");
+			BOOST_CHECK_EQUAL(list.Size(), size + 1);
 			BOOST_CHECK_EQUAL(*(list.begin() + (list.Size() - 1)), "3");
 			BOOST_CHECK_EQUAL(*(list.begin() + (list.Size() - 2)), "asd");
 			BOOST_CHECK_EQUAL(*(list.begin() + (list.Size() - 3)), "2");
@@ -285,18 +303,18 @@ BOOST_FIXTURE_TEST_SUITE(empty_integer_list, empty_integer_list_)
 
 		BOOST_AUTO_TEST_CASE(push_back)
 		{
-			list.Push_back(111);
+			list.PushBack(111);
 			BOOST_CHECK_EQUAL(list.Size(), 1);
-			list.Push_back(222);
+			list.PushBack(222);
 			BOOST_CHECK_EQUAL(list.Size(), 2);
 			BOOST_CHECK(!list.Empty());
 		}
 
 		BOOST_AUTO_TEST_CASE(push_front)
 		{
-			list.Push_front(222);
+			list.PushFront(222);
 			BOOST_CHECK_EQUAL(list.Size(), 1);
-			list.Push_front(111);
+			list.PushFront(111);
 			BOOST_CHECK_EQUAL(list.Size(), 2);
 			BOOST_CHECK(!list.Empty());
 		}
@@ -316,7 +334,7 @@ BOOST_FIXTURE_TEST_SUITE(empty_integer_list, empty_integer_list_)
 
 		BOOST_AUTO_TEST_SUITE(is_not_possible_to_erase_element)
 
-		BOOST_AUTO_TEST_CASE(by_nullptr)
+		BOOST_AUTO_TEST_CASE(by_begin_iterator)
 		{
 			BOOST_REQUIRE_THROW(list.Erase(list.begin()), std::out_of_range);
 		}
@@ -326,7 +344,7 @@ BOOST_FIXTURE_TEST_SUITE(empty_integer_list, empty_integer_list_)
 
 		BOOST_AUTO_TEST_CASE(allows_changing_item_value_using_iterator)
 		{
-			list.Push_back(777);
+			list.PushBack(777);
 			BOOST_CHECK_EQUAL(*list.begin(), 777);
 			*list.begin() = 888;
 			BOOST_CHECK_EQUAL(*list.begin(), 888); // проверка не пройдет
@@ -337,13 +355,14 @@ BOOST_AUTO_TEST_SUITE_END()
 
 struct filled_integer_list_ : public empty_integer_list_
 {
+	std::vector<int> values = { 1, 2, 3 };
 	filled_integer_list_()
 	{
-		list.Push_back(1);
-		list.Push_back(2);
-		list.Push_back(3);
+		for (auto el : values)
+		{
+			list.PushBack(el);
+		}
 	}
-	std::vector<int> values = { 1, 2, 3 };
 };
 
 
@@ -371,12 +390,12 @@ BOOST_FIXTURE_TEST_SUITE(filled_integer_list, filled_integer_list_)
 			}
 		}
 
-		BOOST_AUTO_TEST_SUITE_END()
+	BOOST_AUTO_TEST_SUITE_END()
 
 
-			BOOST_AUTO_TEST_SUITE(can_change_elements_from)
 
-			BOOST_AUTO_TEST_CASE(range_based_for)
+
+		BOOST_AUTO_TEST_CASE(can_loop_through_range_based_for)
 		{
 			size_t index = 0;
 			for (auto str : list)
@@ -386,14 +405,13 @@ BOOST_FIXTURE_TEST_SUITE(filled_integer_list, filled_integer_list_)
 			}
 		}
 
-		BOOST_AUTO_TEST_CASE(iterator)
+		BOOST_AUTO_TEST_CASE(can_change_elements_by_using_iterator)
 		{
 			int newValue = 444;
 			*list.begin() = 444;
 			BOOST_CHECK_EQUAL(*list.begin(), newValue);
 		}
 
-		BOOST_AUTO_TEST_SUITE_END()
 
 
 		BOOST_AUTO_TEST_CASE(should_not_cause_stack_oveflow_on_destruction)
@@ -402,7 +420,7 @@ BOOST_FIXTURE_TEST_SUITE(filled_integer_list, filled_integer_list_)
 				CMyList<int> lst1;
 				for (int i = 0; i < 100000; ++i)
 				{
-					lst1.Push_back(123);
+					lst1.PushBack(123);
 				}
 				std::cout << "(list is filled, ";
 			}
@@ -495,7 +513,9 @@ BOOST_FIXTURE_TEST_SUITE(filled_integer_list, filled_integer_list_)
 			BOOST_AUTO_TEST_CASE(middle)
 			{
 				auto it = ++list.begin();
+				size_t size = list.Size();
 				list.Insert(it, 245);
+				BOOST_CHECK_EQUAL(list.Size(), size + 1);
 				BOOST_CHECK_EQUAL(*(list.begin() + 1), 245);
 				BOOST_CHECK_EQUAL(*(++list.begin()), 245);
 				BOOST_CHECK_EQUAL(*(list.begin()), 1);
@@ -506,14 +526,18 @@ BOOST_FIXTURE_TEST_SUITE(filled_integer_list, filled_integer_list_)
 
 			BOOST_AUTO_TEST_CASE(beginning)
 			{
+				size_t size = list.Size();		
 				list.Insert(list.begin(), 0);
+				BOOST_CHECK_EQUAL(list.Size(), size + 1);
 				BOOST_CHECK_EQUAL(*list.begin(), 0);
 				BOOST_CHECK_EQUAL(*(list.begin() + 1), 1);
 			}
 
 			BOOST_AUTO_TEST_CASE(last_iterator_pos)
 			{
+				size_t size = list.Size();
 				list.Insert(list.begin() + (list.Size() - 1), 245);
+				BOOST_CHECK_EQUAL(list.Size(), size + 1); 
 				BOOST_CHECK_EQUAL(*(list.begin() + (list.Size() - 1)), 3);
 				BOOST_CHECK_EQUAL(*(list.begin() + (list.Size() - 2)), 245);
 				BOOST_CHECK_EQUAL(*(list.begin() + (list.Size() - 3)), 2);
@@ -523,3 +547,5 @@ BOOST_FIXTURE_TEST_SUITE(filled_integer_list, filled_integer_list_)
 
 
 BOOST_AUTO_TEST_SUITE_END()
+
+
