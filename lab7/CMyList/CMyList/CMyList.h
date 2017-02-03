@@ -295,7 +295,7 @@ public:
 
 	CIterator end() const
 	{
-		return CIterator(m_tail->next.get());
+		return CIterator(m_tail);
 	}
 
 	const CConstIterator Cbegin() const

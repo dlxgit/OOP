@@ -70,7 +70,7 @@ BOOST_FIXTURE_TEST_SUITE(empty_string_list, empty_string_list_)
 		list.PushBack("hello");
 		BOOST_CHECK_EQUAL(*list.begin(), "hello");
 		*list.begin() = "goodbye";
-		BOOST_CHECK_EQUAL(*list.begin(), "goodbye"); // проверка не пройдет
+		BOOST_CHECK_EQUAL(*list.begin(), "goodbye");
 	}
 
 BOOST_AUTO_TEST_SUITE_END()
