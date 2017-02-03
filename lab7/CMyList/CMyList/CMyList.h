@@ -9,10 +9,10 @@ public:
 	struct Node 
 	{
 		Node(const T & data, Node * prev, std::unique_ptr<Node> && next)
-			: data(data), prev(prev), next(std::move(next))
+			: data(std::make_unique<T>(data)), prev(prev), next(std::move(next))
 		{
 		}
-		T data;
+		std::unique_ptr<T> data;
 		Node * prev;
 		std::unique_ptr<Node> next;
 	};
@@ -77,7 +77,7 @@ public:
 
 		T & operator * () const
 		{
-			return (*m_node).data;
+			return *((*m_node).data);
 		}
 
 		bool operator!=(CIterator const & other) const
@@ -140,7 +140,7 @@ public:
 
 		T * operator->()const
 		{
-			return &m_node->data;
+			return m_node->data.get();
 		}
 
 	private:
@@ -295,7 +295,12 @@ public:
 
 	CIterator end() const
 	{
-		return CIterator(m_tail->next.get());
+		if(Empty())
+		{ 
+			return nullptr;
+		}
+
+		return CIterator(Node(&(m_tail->data), m_tail, nullptr));
 	}
 
 	const CConstIterator Cbegin() const

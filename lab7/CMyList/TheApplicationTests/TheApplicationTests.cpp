@@ -4,6 +4,7 @@
 #include <iostream>
 
 
+
 struct empty_string_list_
 {
 	empty_string_list_() 
@@ -14,6 +15,9 @@ struct empty_string_list_
 };
 
 
+
+
+
 BOOST_FIXTURE_TEST_SUITE(empty_string_list, empty_string_list_)
 	
 	BOOST_AUTO_TEST_CASE(is_empty_after_creating)
@@ -22,6 +26,7 @@ BOOST_FIXTURE_TEST_SUITE(empty_string_list, empty_string_list_)
 		BOOST_CHECK(list.Empty());
 	}
 		
+
 	BOOST_AUTO_TEST_SUITE(changes_size_after)
 
 		BOOST_AUTO_TEST_CASE(push_back)
@@ -44,7 +49,7 @@ BOOST_FIXTURE_TEST_SUITE(empty_string_list, empty_string_list_)
 
 	BOOST_AUTO_TEST_SUITE_END()
 	
-
+		
 	BOOST_AUTO_TEST_SUITE(can_be)
 
 		BOOST_AUTO_TEST_CASE(cleared)
@@ -70,10 +75,11 @@ BOOST_FIXTURE_TEST_SUITE(empty_string_list, empty_string_list_)
 		list.PushBack("hello");
 		BOOST_CHECK_EQUAL(*list.begin(), "hello");
 		*list.begin() = "goodbye";
-		BOOST_CHECK_EQUAL(*list.begin(), "goodbye"); // проверка не пройдет
+		BOOST_CHECK_EQUAL(*list.begin(), "goodbye"); // проверка не пройдет (Исправлено!)
 	}
 
 BOOST_AUTO_TEST_SUITE_END()
+
 
 
 struct filled_string_list_ : public empty_string_list_
@@ -148,7 +154,7 @@ BOOST_FIXTURE_TEST_SUITE(filled_string_list, filled_string_list_)
 		}
 		std::cout << "and successfully destroyed)" << std::endl;
 	}
-
+	
 
 	BOOST_AUTO_TEST_SUITE(iterator_operator)
 
@@ -280,9 +286,11 @@ BOOST_FIXTURE_TEST_SUITE(filled_string_list, filled_string_list_)
 		}
 
 	BOOST_AUTO_TEST_SUITE_END()
-
+		
 	
 BOOST_AUTO_TEST_SUITE_END()
+
+
 
 
 struct empty_integer_list_
@@ -547,5 +555,3 @@ BOOST_FIXTURE_TEST_SUITE(filled_integer_list, filled_integer_list_)
 
 
 BOOST_AUTO_TEST_SUITE_END()
-
-
