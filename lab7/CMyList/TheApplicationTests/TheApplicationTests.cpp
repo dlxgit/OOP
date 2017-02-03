@@ -107,7 +107,7 @@ BOOST_FIXTURE_TEST_SUITE(filled_string_list, filled_string_list_)
 		BOOST_AUTO_TEST_CASE(reversed_iterators)
 		{
 			size_t index = list.Size() - 1;
-			for (auto iter = list.Rbegin(); iter != list.Rend(); --iter)
+			for (auto iter = list.Rbegin(); iter != list.Rend(); ++iter)
 			{
 				BOOST_CHECK(*iter == values[index]);
 				--index;
@@ -383,7 +383,7 @@ BOOST_FIXTURE_TEST_SUITE(filled_integer_list, filled_integer_list_)
 		BOOST_AUTO_TEST_CASE(reversed_iterators)
 		{
 			size_t index = list.Size() - 1;
-			for (auto iter = list.Rbegin(); iter != list.Rend(); --iter)
+			for (auto iter = list.Rbegin(); iter != list.Rend(); ++iter)
 			{
 				BOOST_CHECK(*iter == values[index]);
 				--index;
@@ -448,6 +448,9 @@ BOOST_FIXTURE_TEST_SUITE(filled_integer_list, filled_integer_list_)
 			BOOST_AUTO_TEST_CASE(plus_number_works_correctly)
 			{
 				BOOST_CHECK_EQUAL(*(list.begin() + 0), values[0]);
+
+				BOOST_CHECK_EQUAL(*(list.Rbegin() + 2), values[0]);
+
 				BOOST_CHECK_EQUAL(*(list.begin() + 1), values[1]);
 				BOOST_CHECK_EQUAL(*(list.begin() + 2), values[2]);
 				BOOST_REQUIRE_THROW(list.begin() + 3, std::out_of_range);

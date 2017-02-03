@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <stdexcept> 
 
 template <typename T>
 
@@ -104,9 +105,10 @@ public:
 
 		CIterator operator+(int index)
 		{
-			while (abs(index) > 0)
+			size_t nIterations = abs(index);
+			while (nIterations > 0)
 			{
-				if (m_isReverse || index < 0)
+				if (m_isReverse && index > 0 || !m_isReverse && index < 0)
 				{
 					m_node = m_node->prev;
 				}
@@ -114,12 +116,13 @@ public:
 				{
 					m_node = m_node->next.get();
 				}
+				--nIterations;
 
 				if (m_node == nullptr)
 				{
 					throw std::out_of_range("Iterator incrementing is impossible");
 				}
-				--index;
+				;
 			}
 			return CIterator(m_node);
 		}
@@ -315,7 +318,7 @@ public:
 
 	CIterator Rend() const
 	{
-		return CIterator(m_head->prev, true);
+		return CIterator(m_head.get(), true);
 	}
 
 	const CConstIterator Crbegin() const
