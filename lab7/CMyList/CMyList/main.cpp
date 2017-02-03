@@ -18,12 +18,15 @@ void main()
 	int step = -2;
 	int last = *(rend + step);
 
-	size_t index = 2;
-	for (auto iter = lst.Rbegin(); iter != lst.Rend(); ++iter)
+
+	auto itr = --lst.Cend();
+	auto itr2 = lst.Cend() + (-1);
+	size_t index = 0;
+	for (auto iter = lst.Cbegin(); iter != lst.Cend(); ++iter)
 	{
-		if (*iter == *(lst.begin() + index))
+		if (*iter == *(lst.Cbegin() + index))
 		{
-			--index;
+			++index;
 		}
 		else
 		{

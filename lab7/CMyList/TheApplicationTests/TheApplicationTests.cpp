@@ -459,6 +459,8 @@ BOOST_FIXTURE_TEST_SUITE(filled_integer_list, filled_integer_list_)
 			BOOST_AUTO_TEST_CASE(is_equal_works_correctly)
 			{
 				BOOST_CHECK(++list.begin() == (list.begin() + 1));
+				BOOST_CHECK(++list.Cbegin() == (list.Cbegin() + 1));
+				BOOST_CHECK(--list.Cend() == (list.Cend() + (-1)));
 				BOOST_CHECK((list.begin() == (list.begin() + 1)) == false);
 			}
 

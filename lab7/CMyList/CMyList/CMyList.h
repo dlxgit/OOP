@@ -122,7 +122,6 @@ public:
 				{
 					throw std::out_of_range("Iterator incrementing is impossible");
 				}
-				;
 			}
 			return CIterator(m_node);
 		}
@@ -175,6 +174,55 @@ public:
 		bool operator==(CConstIterator const & other) const
 		{
 			return m_node == other.m_node;
+		}
+
+		CConstIterator & operator++()
+		{
+			m_node = m_isReverse ? m_node->prev : m_node->next.get();
+			return *this;
+		}
+
+		CConstIterator & operator--()
+		{
+			m_node = m_isReverse ? m_node->next.get() : m_node->prev;
+			return *this;
+		}
+
+		CConstIterator operator+(int index)
+		{
+			size_t nIterations = abs(index);
+			while (nIterations > 0)
+			{
+				if (m_isReverse && index > 0 || !m_isReverse && index < 0)
+				{
+					m_node = m_node->prev;
+				}
+				else
+				{
+					m_node = m_node->next.get();
+				}
+				--nIterations;
+
+				if (m_node == nullptr)
+				{
+					throw std::out_of_range("Iterator incrementing is impossible");
+				}
+			}
+			return CConstIterator(m_node);
+		}
+
+		CConstIterator operator++(int)
+		{
+			CConstIterator oldValue = *this;
+			++(*this);
+			return oldValue;
+		}
+
+		CConstIterator operator--(int)
+		{
+			CConstIterator oldValue = *this;
+			--(*this);
+			return oldValue;
 		}
 
 		const T * operator->()const
@@ -301,14 +349,14 @@ public:
 		return CIterator(m_tail);
 	}
 
-	const CConstIterator Cbegin() const
+	CConstIterator Cbegin() const
 	{
 		return CConstIterator(m_head.get());
 	}
 
-	const CConstIterator Cend() const
+	CConstIterator Cend() const
 	{
-		return CConstIterator(nullptr);
+		return CConstIterator(m_tail);
 	}
 
 	CIterator Rbegin() const
