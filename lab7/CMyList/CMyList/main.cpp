@@ -13,6 +13,17 @@ void main()
 	lst.PushBack(2);
 	lst.PushBack(3);
 
+
+
+	auto iter = lst.end();
+	auto iterlast = --lst.end();
+	auto iter2 = ++iterlast;
+	for (auto el = lst.begin(); el != lst.end(); ++el)
+	{
+		int a = 3;
+	}
+
+
 	CMyList<int>::CIterator rend = lst.Rend();
 	
 	int step = -2;

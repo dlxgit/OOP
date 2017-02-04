@@ -9,11 +9,11 @@ class CMyList
 public:
 	struct Node 
 	{
-		Node(const T & data, Node * prev, std::unique_ptr<Node> && next)
-			: data(data), prev(prev), next(std::move(next))
+		Node(std::unique_ptr<T> && data, Node * prev, std::unique_ptr<Node> && next)
+			: data(std::move(data)), prev(prev), next(std::move(next))
 		{
 		}
-		T data;
+		std::unique_ptr<T> data;
 		Node * prev;
 		std::unique_ptr<Node> next;
 	};
@@ -78,7 +78,7 @@ public:
 
 		T & operator * () const
 		{
-			return (*m_node).data;
+			return *(m_node->data);
 		}
 
 		bool operator!=(CIterator const & other) const
@@ -93,6 +93,11 @@ public:
 
 		CIterator & operator++()
 		{
+			if (m_node->next == nullptr)
+			{
+				*this = CIterator(&Node(nullptr, m_node, nullptr));
+				return *this;
+			}
 			m_node = m_isReverse ? m_node->prev : m_node->next.get();
 			return *this;
 		}
@@ -142,7 +147,7 @@ public:
 
 		T * operator->()const
 		{
-			return &m_node->data;
+			return m_node->data.get();
 		}
 
 	private:
@@ -163,7 +168,7 @@ public:
 	
 		const T & operator * () const
 		{
-			return m_node->data;
+			return *(m_node->data);
 		}
 
 		bool operator!=(CConstIterator const & other) const
@@ -227,7 +232,7 @@ public:
 
 		const T * operator->()const
 		{
-			return &m_node->data;
+			return m_node->data.get();
 		}
 
 	private:
@@ -237,7 +242,7 @@ public:
 	
 	void PushBack(const T & elem)
 	{
-		std::unique_ptr<Node> newElement = std::make_unique<Node>(elem, m_tail, nullptr);
+		std::unique_ptr<Node> newElement = std::make_unique<Node>(std::make_unique<T>(elem), m_tail, nullptr);
 		if (!Empty())
 		{
 			m_tail->next = std::move(newElement);
@@ -255,13 +260,13 @@ public:
 	{
 		if (!Empty())
 		{
-			std::unique_ptr<Node> newElement = std::make_unique<Node>(elem, nullptr, std::move(m_head));
+			std::unique_ptr<Node> newElement = std::make_unique<Node>(std::make_unique<T>(elem), nullptr, std::move(m_head));
 			m_head = std::move(newElement);
 			m_head->next->prev = m_head.get();
 		}
 		else
 		{
-			std::unique_ptr<Node> newElement = std::make_unique<Node>(elem, nullptr, std::move(m_head));
+			std::unique_ptr<Node> newElement = std::make_unique<Node>(std::make_unique<T>(elem), nullptr, std::move(m_head));
 			m_head = std::move(newElement);
 			m_tail = m_head.get();
 		}
@@ -300,7 +305,7 @@ public:
 		}
 
 		Node * prevNode = it.m_node->prev;
-		std::unique_ptr<Node> newNode = std::make_unique<Node>(value, it.m_node->prev, std::move(it.m_node->prev->next));
+		std::unique_ptr<Node> newNode = std::make_unique<Node>(std::make_unique<T>(value), it.m_node->prev, std::move(it.m_node->prev->next));
 		prevNode->next = std::move(newNode);
 		++m_size;
 
@@ -346,7 +351,7 @@ public:
 
 	CIterator end() const
 	{
-		return CIterator(m_tail);
+		return CIterator(&Node(nullptr, m_tail, nullptr));
 	}
 
 	CConstIterator Cbegin() const
