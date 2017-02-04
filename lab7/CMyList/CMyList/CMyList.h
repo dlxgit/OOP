@@ -93,11 +93,6 @@ public:
 
 		CIterator & operator++()
 		{
-			if (m_node->next == nullptr)
-			{
-				*this = CIterator(&Node(nullptr, m_node, nullptr));
-				return *this;
-			}
 			m_node = m_isReverse ? m_node->prev : m_node->next.get();
 			return *this;
 		}
@@ -240,9 +235,25 @@ public:
 		bool m_isReverse = false;
 	};
 	
+
+	std::unique_ptr<Node> CreateTailElement(const T & data, Node * tail)
+	{
+		auto newElem = std::make_unique<Node>(std::make_unique<T>(data), m_tail, nullptr);
+		newElem->next = std::make_unique<Node>(nullptr, newElem.get(), nullptr);
+		return newElem;
+	}
+
+	std::unique_ptr<Node> CreateHeadElement(const T & data, Node * tail)
+	{
+		auto newElem = std::make_unique<Node>(std::make_unique<T>(data), m_tail, nullptr);
+		newElem->prev = std::make_unique<Node>(nullptr, newElem.get(), nullptr);
+		return newElem;
+	}
+
+
 	void PushBack(const T & elem)
 	{
-		std::unique_ptr<Node> newElement = std::make_unique<Node>(std::make_unique<T>(elem), m_tail, nullptr);
+		std::unique_ptr<Node> newElement = CreateTailElement(elem, m_tail);
 		if (!Empty())
 		{
 			m_tail->next = std::move(newElement);
@@ -351,7 +362,7 @@ public:
 
 	CIterator end() const
 	{
-		return CIterator(&Node(nullptr, m_tail, nullptr));
+		return CIterator(m_tail->next.get());
 	}
 
 	CConstIterator Cbegin() const
