@@ -1,9 +1,8 @@
 #pragma once
 #include "CPersonImpl.h"
 
- 
  template <typename Base>
- class CStudentImpl : public CPersonImpl<Base>
+class CStudentImpl : public CPersonImpl<Base>
 {
 public:
 	CStudentImpl(const std::string & name,
@@ -22,17 +21,9 @@ public:
 	{
 		return m_university;
 	}
-	virtual void SetUniversity(const std::string & university)
-	{
-		m_university = university;
-	}
 	virtual unsigned GetId() const
 	{
 		return m_id;
-	}
-	virtual void SetId(unsigned id)
-	{
-		m_id = id;
 	}
 
 private:

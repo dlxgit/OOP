@@ -14,18 +14,12 @@ public:
 		const std::string & university,
 		unsigned id,
 		const std::string & dissertationTopic)
-		:
-		CStudentImpl(name, surname, fatherName, address, university, id),
+		:CStudentImpl(name, surname, fatherName, address, university, id),
 		m_dissertationTopic(dissertationTopic)
-	{
-	}
+	{}
 	virtual std::string GetDissertationTopic() const
 	{
 		return m_dissertationTopic;
-	}
-	virtual void SetDissertationTopic(const std::string & topic)
-	{
-		m_dissertationTopic = topic;
 	}
 private:
 	std::string m_dissertationTopic;

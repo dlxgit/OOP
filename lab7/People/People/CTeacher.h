@@ -21,10 +21,6 @@ public:
 	{
 		return m_subject;
 	}
-	virtual void SetSubject(const std::string & subject)
-	{
-		m_subject = subject;
-	}
 private:
 	std::string m_subject;
 };

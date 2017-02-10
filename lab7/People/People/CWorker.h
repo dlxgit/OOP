@@ -21,10 +21,6 @@ public:
 	{
 		return m_speciality;
 	}
-	virtual void SetSpeciality(const std::string & speciality)
-	{
-		m_speciality = speciality;
-	}
 private:
 	std::string m_speciality;
 };

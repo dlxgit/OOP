@@ -10,9 +10,9 @@ public:
 		const std::string & surname,
 		const std::string & fatherName,
 		const std::string & address,
-		const std::string & university, 
+		const std::string & university,
 		unsigned id)
 		:
-		CStudentImpl<IStudent>(name,surname,fatherName,address, university, id)
+		CStudentImpl<IStudent>(name, surname, fatherName, address, university, id)
 	{}
 };

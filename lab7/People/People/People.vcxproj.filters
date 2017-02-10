@@ -20,8 +20,44 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Header.h">
-      <Filter>Resource Files</Filter>
+    <ClInclude Include="IPerson.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IPupil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ITeacher.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IStudent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IWorker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IAdvancedStudent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CPupil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CTeacher.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CAdvancedStudent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CStudent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CWorker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CPersonImpl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CStudentImpl.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
